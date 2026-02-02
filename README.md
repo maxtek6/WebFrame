@@ -1,4 +1,4 @@
-![project logo](assets/webframewide.png)
+![project logo](assets/WebFrame.png)
 
 Cross-platform runtime for web apps.
 
