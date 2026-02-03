@@ -1,0 +1,30 @@
+{
+  "name": "webframe",
+  "version": "0.1.0",
+  "description": "A C++ runtime for web applications",
+  "main": "./lib/index.js",
+  "scripts": {
+    "install": "node build-helper.js",
+    "build": "node build-helper.js",
+    "clean": "rm -rf build lib"
+  },
+  "keywords": [
+    "web",
+    "runtime",
+    "c++",
+    "native"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {},
+  "os": [
+    "linux",
+    "darwin",
+    "win32"
+  ],
+  "arch": [
+    "x64",
+    "arm64"
+  ]
+}
