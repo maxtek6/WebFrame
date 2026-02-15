@@ -66,4 +66,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          "${VCPKG_ROOT}/vcpkg" install --triplet "${{ matrix.triplet }}"
+          if [[ "${RUNNER_OS}" == "Windows" ]]; then
+            VCPKG_EXE="${VCPKG_ROOT}/vcpkg.exe"
+          else
+            VCPKG_EXE="${VCPKG_ROOT}/vcpkg"
+          fi
+          "${VCPKG_EXE}" install --triplet "${{ matrix.triplet }}"
