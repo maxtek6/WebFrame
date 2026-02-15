@@ -1,0 +1,86 @@
+name: test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  vcpkg:
+    uses: ./.github/workflows/vcpkg.yml
+    with:
+      vcpkg_commit: "master"
+
+  build:
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    needs: vcpkg
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            triplet: x64-windows
+          - os: ubuntu-latest
+            triplet: x64-linux
+          - os: macos-latest
+            triplet: x64-osx
+    env:
+      VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+      VCPKG_DEFAULT_TRIPLET: ${{ matrix.triplet }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Restore vcpkg cache
+        id: vcpkg-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            vcpkg_installed
+            vcpkg/downloads
+          key: vcpkg-${{ runner.os }}-${{ matrix.triplet }}-master-${{ hashFiles('vcpkg.json') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-${{ matrix.triplet }}-master-
+            vcpkg-${{ runner.os }}-${{ matrix.triplet }}-
+
+      - name: Prepare vcpkg
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! -d "${VCPKG_ROOT}/.git" ]]; then
+            git clone https://github.com/microsoft/vcpkg "${VCPKG_ROOT}"
+          fi
+          git -C "${VCPKG_ROOT}" fetch --depth 1 origin master
+          git -C "${VCPKG_ROOT}" checkout master
+
+      - name: Bootstrap vcpkg
+        if: steps.vcpkg-cache.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${RUNNER_OS}" == "Windows" ]]; then
+            cmd.exe /c "${VCPKG_ROOT}\\bootstrap-vcpkg.bat"
+          else
+            "${VCPKG_ROOT}/bootstrap-vcpkg.sh"
+          fi
+
+      - name: Install vcpkg dependencies
+        if: steps.vcpkg-cache.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          "${VCPKG_ROOT}/vcpkg" install --manifest --triplet "${{ matrix.triplet }}"
+
+      - name: Configure
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S . -B build \
+            -DCMAKE_TOOLCHAIN_FILE="${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" \
+            -DVCPKG_TARGET_TRIPLET="${{ matrix.triplet }}"
+
+      - name: Build
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake --build build --config Release

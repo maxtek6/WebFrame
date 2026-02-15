@@ -1,0 +1,69 @@
+name: vcpkg
+
+on:
+  workflow_call:
+    inputs:
+      vcpkg_commit:
+        description: "vcpkg commit, tag, or branch to checkout"
+        type: string
+        required: false
+        default: "master"
+
+jobs:
+  build-cache:
+    name: Build vcpkg cache (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            triplet: x64-windows
+          - os: ubuntu-latest
+            triplet: x64-linux
+          - os: macos-latest
+            triplet: x64-osx
+    env:
+      VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+      VCPKG_DEFAULT_TRIPLET: ${{ matrix.triplet }}
+      VCPKG_FEATURE_FLAGS: manifests,binarycaching
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Restore vcpkg cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            vcpkg_installed
+            vcpkg/downloads
+          key: vcpkg-${{ runner.os }}-${{ matrix.triplet }}-${{ inputs.vcpkg_commit }}-${{ hashFiles('vcpkg.json') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-${{ matrix.triplet }}-${{ inputs.vcpkg_commit }}-
+            vcpkg-${{ runner.os }}-${{ matrix.triplet }}-
+
+      - name: Prepare vcpkg
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! -d "${VCPKG_ROOT}/.git" ]]; then
+            git clone https://github.com/microsoft/vcpkg "${VCPKG_ROOT}"
+          fi
+          git -C "${VCPKG_ROOT}" fetch --depth 1 origin "${{ inputs.vcpkg_commit }}"
+          git -C "${VCPKG_ROOT}" checkout "${{ inputs.vcpkg_commit }}"
+
+      - name: Bootstrap vcpkg
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${RUNNER_OS}" == "Windows" ]]; then
+            cmd.exe /c "${VCPKG_ROOT}\\bootstrap-vcpkg.bat"
+          else
+            "${VCPKG_ROOT}/bootstrap-vcpkg.sh"
+          fi
+
+      - name: Install vcpkg dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          "${VCPKG_ROOT}/vcpkg" install --manifest --triplet "${{ matrix.triplet }}"
