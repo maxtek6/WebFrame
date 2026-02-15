@@ -66,4 +66,4 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          "${VCPKG_ROOT}/vcpkg" install --manifest --triplet "${{ matrix.triplet }}"
+          "${VCPKG_ROOT}/vcpkg" install --triplet "${{ matrix.triplet }}"
