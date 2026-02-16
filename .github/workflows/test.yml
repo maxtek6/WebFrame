@@ -18,6 +18,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install mono
+        run: |
+          sudo apt update
+          sudo apt install -y mono-complete
+
       - name: Setup NuGet authentication
         run: |
           dotnet nuget add source \
