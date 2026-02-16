@@ -25,11 +25,23 @@ jobs:
           - os: macos-latest
             triplet: x64-osx
     env:
-      VCPKG_ROOT: ${{ github.workspace }}/vcpkg
       VCPKG_DEFAULT_TRIPLET: ${{ matrix.triplet }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Set VCPKG_ROOT (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          "VCPKG_ROOT=$($env:GITHUB_WORKSPACE)\vcpkg" | Out-File -FilePath $env:GITHUB_ENV -Encoding ascii -Append
+
+      - name: Set VCPKG_ROOT (Unix)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "VCPKG_ROOT=${GITHUB_WORKSPACE}/vcpkg" >> "$GITHUB_ENV"
 
       - name: Restore vcpkg cache
         id: vcpkg-cache
