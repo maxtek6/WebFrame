@@ -12,3 +12,8 @@ jobs:
       - uses: lukka/get-cmake@latest
       - name: vcpkg setup
         uses: lukka/run-vcpkg@v11
+      - name: run cmake
+        run: cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=./vcpkg/scripts/buildsystems/vcpkg.cmake
+      - name: build
+        run: cmake --build build --config Release
+      
