@@ -1,5 +1,6 @@
 {
     "name": "webframe",
+    "builtin-baseline": "e5a1490e1409d175932ef6014519e9ae149ddb7c",
     "version": "0.1.0",
     "description": "Portable C++ runtime for web applications",
     "homepage": "https://github.com/maxtek6/webframe",
