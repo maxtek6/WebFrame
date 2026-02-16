@@ -34,8 +34,5 @@ jobs:
           triplet: ${{ matrix.triplet }}
 
       - name: Setup vcpkg
-        uses: ./.github/vcpkg
-        with:
-          os: ${{ matrix.os }}
-          triplet: ${{ matrix.triplet }}
-          shell: ${{ matrix.shell }}
+        uses: lukka/run-vcpkg@v11
+        
