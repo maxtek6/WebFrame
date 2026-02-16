@@ -9,21 +9,30 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    needs: vcpkg
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            triplet: x64-windows
+          - os: ubuntu-latest
+            triplet: x64-linux
+          - os: macos-latest
+            triplet: x64-osx
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Restore vcpkg cache
-        uses: actions/cache@v4
+        uses: ${{github.workspace}}/.github/actions/cache.yml
         with:
-          path: vcpkg-cache
-          key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}
+          triplet: ${{ matrix.triplet }}
 
-      - name: Bootstrap vcpkg
-        run: |
-          git clone https://github.com/microsoft/vcpkg
-          ./vcpkg/bootstrap-vcpkg.sh
-
-      - name: Install dependencies
-        run: ./vcpkg/vcpkg install --triplet x64-linux
+      - name: Setup vcpkg
+        uses: ${{github.workspace}}/.github/actions/vcpkg.yml
+        with:
+          os: ${{ matrix.os }}
+          triplet: ${{ matrix.triplet }}

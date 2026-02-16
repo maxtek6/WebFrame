@@ -1,0 +1,19 @@
+name: vcpkg
+descritpion: Bootstrap and install dependencies with vcpkg
+inputs:
+  os:
+    description: "The operating system to run the job on"
+    required: true
+  triplet:
+    description: "The vcpkg triplet to use"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Clone vcpkg
+      run: git clone https://github.com/microsoft/vcpkg
+    - name: Bootstrap vcpkg
+      if: ${{ inputs.os }} == 'windows-latest'
+      run: .\vcpkg\bootstrap-vcpkg.bat
+      else:
+      run: ./vcpkg/bootstrap-vcpkg.sh
