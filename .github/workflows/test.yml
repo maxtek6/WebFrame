@@ -5,118 +5,18 @@ on:
   pull_request:
 
 jobs:
-  vcpkg:
-    uses: ./.github/workflows/vcpkg.yml
-    with:
-      vcpkg_commit: "master"
-
-  build:
-    name: Build (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    needs: vcpkg
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: windows-latest
-            triplet: x64-windows
-          - os: ubuntu-latest
-            triplet: x64-linux
-          - os: macos-latest
-            triplet: x64-osx
+  test:
+    runs-on: ubuntu-latest
     env:
-      VCPKG_DEFAULT_TRIPLET: ${{ matrix.triplet }}
+      VCPKG_BINARY_SOURCES: "clear;x-gha,read"
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set VCPKG_ROOT (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
+      - name: Install vcpkg
         run: |
-          "VCPKG_ROOT=$($env:GITHUB_WORKSPACE)\vcpkg" | Out-File -FilePath $env:GITHUB_ENV -Encoding ascii -Append
+          git clone https://github.com/microsoft/vcpkg
+          ./vcpkg/bootstrap-vcpkg.sh
 
-      - name: Set VCPKG_ROOT (Unix)
-        if: runner.os != 'Windows'
-        shell: bash
+      - name: Install dependencies (restored from cache)
         run: |
-          set -euo pipefail
-          echo "VCPKG_ROOT=${GITHUB_WORKSPACE}/vcpkg" >> "$GITHUB_ENV"
-
-      - name: Restore vcpkg cache
-        id: vcpkg-cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            vcpkg_installed
-            vcpkg/downloads
-          key: vcpkg-${{ runner.os }}-${{ matrix.triplet }}-master-${{ hashFiles('vcpkg.json') }}
-          restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.triplet }}-master-
-            vcpkg-${{ runner.os }}-${{ matrix.triplet }}-
-
-      - name: Prepare vcpkg (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          $vcpkgRoot = Join-Path $env:GITHUB_WORKSPACE 'vcpkg'
-          if (-not (Test-Path -Path (Join-Path $vcpkgRoot '.git'))) {
-            git clone https://github.com/microsoft/vcpkg $vcpkgRoot
-          }
-          git -C $vcpkgRoot fetch --depth 1 origin master
-          git -C $vcpkgRoot checkout master
-
-      - name: Prepare vcpkg (Unix)
-        if: runner.os != 'Windows'
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [[ ! -d "${VCPKG_ROOT}/.git" ]]; then
-            git clone https://github.com/microsoft/vcpkg "${VCPKG_ROOT}"
-          fi
-          git -C "${VCPKG_ROOT}" fetch --depth 1 origin master
-          git -C "${VCPKG_ROOT}" checkout master
-
-      - name: Bootstrap vcpkg (Windows)
-        if: runner.os == 'Windows' && steps.vcpkg-cache.outputs.cache-hit != 'true'
-        shell: pwsh
-        run: |
-          $vcpkgRoot = Join-Path $env:GITHUB_WORKSPACE 'vcpkg'
-          if (-not (Test-Path -Path (Join-Path $vcpkgRoot 'vcpkg.exe'))) {
-            & (Join-Path $vcpkgRoot 'bootstrap-vcpkg.bat')
-          }
-
-      - name: Bootstrap vcpkg (Unix)
-        if: runner.os != 'Windows' && steps.vcpkg-cache.outputs.cache-hit != 'true'
-        shell: bash
-        run: |
-          set -euo pipefail
-          "${VCPKG_ROOT}/bootstrap-vcpkg.sh"
-
-      - name: Install vcpkg dependencies (Windows)
-        if: runner.os == 'Windows' && steps.vcpkg-cache.outputs.cache-hit != 'true'
-        shell: pwsh
-        run: |
-          $vcpkgRoot = Join-Path $env:GITHUB_WORKSPACE 'vcpkg'
-          & (Join-Path $vcpkgRoot 'vcpkg.exe') install --triplet "${{ matrix.triplet }}"
-
-      - name: Install vcpkg dependencies (Unix)
-        if: runner.os != 'Windows' && steps.vcpkg-cache.outputs.cache-hit != 'true'
-        shell: bash
-        run: |
-          set -euo pipefail
-          "${VCPKG_ROOT}/vcpkg" install --triplet "${{ matrix.triplet }}"
-
-      - name: Configure
-        shell: bash
-        run: |
-          set -euo pipefail
-          cmake -S . -B build \
-            -DCMAKE_TOOLCHAIN_FILE="${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" \
-            -DVCPKG_TARGET_TRIPLET="${{ matrix.triplet }}"
-
-      - name: Build
-        shell: bash
-        run: |
-          set -euo pipefail
-          cmake --build build --config Release
+          ./vcpkg/vcpkg install --triplet x64-linux

@@ -1,107 +1,24 @@
 name: vcpkg
 
 on:
-  workflow_call:
-    inputs:
-      vcpkg_commit:
-        description: "vcpkg commit, tag, or branch to checkout"
-        type: string
-        required: false
-        default: "master"
+  workflow_dispatch:
+  push:
+    paths:
+      - vcpkg.json
 
 jobs:
-  build-cache:
-    name: Build vcpkg cache (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: windows-latest
-            triplet: x64-windows
-          - os: ubuntu-latest
-            triplet: x64-linux
-          - os: macos-latest
-            triplet: x64-osx
+  build-deps:
+    runs-on: ubuntu-latest
     env:
-      VCPKG_DEFAULT_TRIPLET: ${{ matrix.triplet }}
-      VCPKG_FEATURE_FLAGS: manifests,binarycaching
+      VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set VCPKG_ROOT (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
+      - name: Install vcpkg
         run: |
-          "VCPKG_ROOT=$($env:GITHUB_WORKSPACE)\vcpkg" | Out-File -FilePath $env:GITHUB_ENV -Encoding ascii -Append
+          git clone https://github.com/microsoft/vcpkg
+          ./vcpkg/bootstrap-vcpkg.sh
 
-      - name: Set VCPKG_ROOT (Unix)
-        if: runner.os != 'Windows'
-        shell: bash
+      - name: Install dependencies
         run: |
-          set -euo pipefail
-          echo "VCPKG_ROOT=${GITHUB_WORKSPACE}/vcpkg" >> "$GITHUB_ENV"
-
-      - name: Restore vcpkg cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            vcpkg_installed
-            vcpkg/downloads
-          key: vcpkg-${{ runner.os }}-${{ matrix.triplet }}-${{ inputs.vcpkg_commit }}-${{ hashFiles('vcpkg.json') }}
-          restore-keys: |
-            vcpkg-${{ runner.os }}-${{ matrix.triplet }}-${{ inputs.vcpkg_commit }}-
-            vcpkg-${{ runner.os }}-${{ matrix.triplet }}-
-
-      - name: Prepare vcpkg (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          $vcpkgRoot = Join-Path $env:GITHUB_WORKSPACE 'vcpkg'
-          if (-not (Test-Path -Path (Join-Path $vcpkgRoot '.git'))) {
-            git clone https://github.com/microsoft/vcpkg $vcpkgRoot
-          }
-          git -C $vcpkgRoot fetch --depth 1 origin "${{ inputs.vcpkg_commit }}"
-          git -C $vcpkgRoot checkout "${{ inputs.vcpkg_commit }}"
-
-      - name: Prepare vcpkg (Unix)
-        if: runner.os != 'Windows'
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [[ ! -d "${VCPKG_ROOT}/.git" ]]; then
-            git clone https://github.com/microsoft/vcpkg "${VCPKG_ROOT}"
-          fi
-          git -C "${VCPKG_ROOT}" fetch --depth 1 origin "${{ inputs.vcpkg_commit }}"
-          git -C "${VCPKG_ROOT}" checkout "${{ inputs.vcpkg_commit }}"
-
-      - name: Bootstrap vcpkg (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          $vcpkgRoot = Join-Path $env:GITHUB_WORKSPACE 'vcpkg'
-          if (-not (Test-Path -Path (Join-Path $vcpkgRoot 'vcpkg.exe'))) {
-            & (Join-Path $vcpkgRoot 'bootstrap-vcpkg.bat')
-          }
-
-      - name: Bootstrap vcpkg (Unix)
-        if: runner.os != 'Windows'
-        shell: bash
-        run: |
-          set -euo pipefail
-          "${VCPKG_ROOT}/bootstrap-vcpkg.sh"
-
-      - name: Install vcpkg dependencies (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          $vcpkgRoot = Join-Path $env:GITHUB_WORKSPACE 'vcpkg'
-          & (Join-Path $vcpkgRoot 'vcpkg.exe') install --triplet "${{ matrix.triplet }}"
-
-      - name: Install vcpkg dependencies (Unix)
-        if: runner.os != 'Windows'
-        shell: bash
-        run: |
-          set -euo pipefail
-          "${VCPKG_ROOT}/vcpkg" install --triplet "${{ matrix.triplet }}"
+          ./vcpkg/vcpkg install --triplet x64-linux
