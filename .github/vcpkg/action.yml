@@ -7,6 +7,9 @@ inputs:
   triplet:
     description: "The vcpkg triplet to use"
     required: true
+  shell:
+    description: "The shell to use for running commands (optional)"
+    required: true
 runs:
   using: "composite"
   steps:

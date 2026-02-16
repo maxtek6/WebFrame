@@ -17,10 +17,13 @@ jobs:
         include:
           - os: windows-latest
             triplet: x64-windows
+            shell: powershell
           - os: ubuntu-latest
             triplet: x64-linux
+            shell: bash
           - os: macos-latest
             triplet: x64-osx
+            shell: bash
 
     steps:
       - uses: actions/checkout@v4
@@ -35,3 +38,4 @@ jobs:
         with:
           os: ${{ matrix.os }}
           triplet: ${{ matrix.triplet }}
+          shell: ${{ matrix.shell }}
