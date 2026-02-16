@@ -4,6 +4,10 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+  packages: write
+
 env:
   VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/maxtek6/index.json,readwrite"
 
@@ -14,28 +18,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup NuGet auth
+      - name: Setup NuGet authentication
         run: |
-          cat <<EOF > nuget.config
-          <?xml version="1.0" encoding="utf-8"?>
-          <configuration>
-            <packageSources>
-              <add key="github" value="https://nuget.pkg.github.com/maxtek6/index.json" />
-            </packageSources>
-            <packageSourceCredentials>
-              <github>
-                <add key="Username" value="${{ github.actor }}" />
-                <add key="ClearTextPassword" value="${{ secrets.GITHUB_TOKEN }}" />
-              </github>
-            </packageSourceCredentials>
-          </configuration>
-          EOF
+          dotnet nuget add source \
+            --username "maxtek6" \
+            --password "${{ secrets.GITHUB_TOKEN }}" \
+            --store-password-in-clear-text \
+            --name github \
+            "https://nuget.pkg.github.com/maxtek6/index.json"
 
       - name: Bootstrap vcpkg
         run: |
           git clone https://github.com/microsoft/vcpkg
           ./vcpkg/bootstrap-vcpkg.sh
-          sudo apt install mono-complete
 
       - name: Install dependencies
         run: ./vcpkg/vcpkg install --triplet x64-linux
