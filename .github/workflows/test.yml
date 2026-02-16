@@ -35,4 +35,5 @@ jobs:
 
       - name: Setup vcpkg
         uses: lukka/run-vcpkg@v11
-        
+        with:
+          runVcpkgInstall: true
