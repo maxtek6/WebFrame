@@ -19,12 +19,15 @@ jobs:
         include:
           - os: windows-latest
             triplet: x64-windows
+            vcpkg_root: ${{ github.workspace }}\vcpkg
           - os: ubuntu-latest
             triplet: x64-linux
+            vcpkg_root: ${{ github.workspace }}/vcpkg
           - os: macos-latest
             triplet: x64-osx
+            vcpkg_root: ${{ github.workspace }}/vcpkg
     env:
-      VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+      VCPKG_ROOT: ${{ matrix.vcpkg_root }}
       VCPKG_DEFAULT_TRIPLET: ${{ matrix.triplet }}
       VCPKG_FEATURE_FLAGS: manifests,binarycaching
     steps:
