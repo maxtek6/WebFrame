@@ -7,16 +7,5 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    env:
-      VCPKG_BINARY_SOURCES: "clear;x-gha,read"
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install vcpkg
-        run: |
-          git clone https://github.com/microsoft/vcpkg
-          ./vcpkg/bootstrap-vcpkg.sh
-
-      - name: Install dependencies (restored from cache)
-        run: |
-          ./vcpkg/vcpkg install --triplet x64-linux
