@@ -23,7 +23,7 @@ jobs:
             triplet: x64-osx
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
 
       - name: Restore vcpkg cache
         uses: ./.github/actions/cache.yml
