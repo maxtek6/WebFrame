@@ -11,4 +11,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: lukka/get-cmake@latest
       - name: vcpkg setup
+        with:
+          vcpkgGitCommitId: '${{ matrix.vcpkgCommitId }}'
         uses: lukka/run-vcpkg@v11
