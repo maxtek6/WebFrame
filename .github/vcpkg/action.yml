@@ -17,7 +17,9 @@ runs:
       with:
         python-version: "3.10"
     - name: Clone vcpkg
+      shell: ${{ inputs.shell }}
       run: git clone https://github.com/microsoft/vcpkg
     - name: Bootstrap vcpkg
+      shell: ${{ inputs.shell }}
       run: python ./.github/vcpkg/setup.py --os ${{ inputs.os }} --triplet ${{ inputs.triplet }}
       
