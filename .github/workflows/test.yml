@@ -27,12 +27,12 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Restore vcpkg cache
-        uses: ${{github.workspace}}/.github/actions/cache.yml
+        uses: ./.github/actions/cache.yml
         with:
           triplet: ${{ matrix.triplet }}
 
       - name: Setup vcpkg
-        uses: ${{github.workspace}}/.github/actions/vcpkg.yml
+        uses: ./.github/actions/vcpkg.yml
         with:
           os: ${{ matrix.os }}
           triplet: ${{ matrix.triplet }}
