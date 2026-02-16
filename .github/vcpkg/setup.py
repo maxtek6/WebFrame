@@ -151,8 +151,8 @@ def main():
         epilog="""
 Examples:
   python setup.py                                    # Use system defaults
-  python setup.py --os linux --triplet x64-linux
-  python setup.py --os windows --triplet x64-windows
+  python setup.py --os linux-latest --triplet x64-linux
+  python setup.py --os windows-latest --triplet x64-windows
   python setup.py --triplet arm64-linux
         """
     )
@@ -160,7 +160,7 @@ Examples:
     parser.add_argument(
         "--os",
         dest="os_name",
-        choices=["windows", "linux", "macos"],
+        choices=["windows-latest", "linux-latest", "macos-latest"],
         default=get_default_os(),
         help="Target operating system (default: %(default)s)"
     )
