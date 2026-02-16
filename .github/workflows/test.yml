@@ -4,12 +4,8 @@ on:
   push:
   pull_request:
 
-permissions:
-  contents: read
-  packages: write
-
 env:
-  VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/maxtek6/index.json,readwrite"
+  VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/vcpkg-cache,readwrite"
 
 jobs:
   build:
@@ -18,19 +14,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install mono
-        run: |
-          sudo apt update
-          sudo apt install -y mono-complete
-
-      - name: Setup NuGet authentication
-        run: |
-          dotnet nuget add source \
-            --username "maxtek6" \
-            --password "${{ secrets.GITHUB_TOKEN }}" \
-            --store-password-in-clear-text \
-            --name github \
-            "https://nuget.pkg.github.com/maxtek6/index.json"
+      - name: Restore vcpkg cache
+        uses: actions/cache@v4
+        with:
+          path: vcpkg-cache
+          key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}
 
       - name: Bootstrap vcpkg
         run: |
