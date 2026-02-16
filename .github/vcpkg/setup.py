@@ -71,11 +71,11 @@ def bootstrap_vcpkg(vcpkg_root: Path) -> bool:
         print(f"✓ vcpkg already bootstrapped at {vcpkg_root}")
         return True
     
-    print(f"📦 Bootstrapping vcpkg...")
+    print(f"Bootstrapping vcpkg...")
     
     # Clone vcpkg if not present
     if not vcpkg_root.exists():
-        print(f"📥 Cloning vcpkg to {vcpkg_root}")
+        print(f"Cloning vcpkg to {vcpkg_root}")
         try:
             subprocess.run(
                 ["git", "clone", "https://github.com/Microsoft/vcpkg.git", str(vcpkg_root)],
@@ -83,7 +83,7 @@ def bootstrap_vcpkg(vcpkg_root: Path) -> bool:
                 capture_output=True
             )
         except subprocess.CalledProcessError as e:
-            print(f"✗ Failed to clone vcpkg: {e.stderr.decode()}")
+            print(f"Failed to clone vcpkg: {e.stderr.decode()}")
             return False
     
     # Run bootstrap script
@@ -102,10 +102,10 @@ def bootstrap_vcpkg(vcpkg_root: Path) -> bool:
                 cwd=vcpkg_root,
                 check=True
             )
-        print("✓ vcpkg bootstrapped successfully")
+        print("vcpkg bootstrapped successfully")
         return True
     except subprocess.CalledProcessError as e:
-        print(f"✗ Bootstrap failed: {e}")
+        print(f"Bootstrap failed: {e}")
         return False
 
 
@@ -124,7 +124,7 @@ def install_dependencies(vcpkg_root: Path, triplet: str, os_name: str) -> bool:
     vcpkg_executable = vcpkg_root / ("vcpkg.exe" if sys.platform == "win32" else "vcpkg")
     project_root = vcpkg_root.parent.parent
     
-    print(f"📦 Installing dependencies for {triplet}...")
+    print(f"Installing dependencies for {triplet}...")
     
     try:
         subprocess.run(
@@ -137,10 +137,10 @@ def install_dependencies(vcpkg_root: Path, triplet: str, os_name: str) -> bool:
             ],
             check=True
         )
-        print(f"✓ Dependencies installed successfully")
+        print(f"Dependencies installed successfully")
         return True
     except subprocess.CalledProcessError as e:
-        print(f"✗ Dependency installation failed: {e}")
+        print(f"Dependency installation failed: {e}")
         return False
 
 
@@ -180,7 +180,7 @@ Examples:
     
     args = parser.parse_args()
     
-    print(f"🚀 WebFrame vcpkg Setup")
+    print(f"WebFrame vcpkg Setup")
     print(f"   OS: {args.os_name}")
     print(f"   Triplet: {args.triplet}")
     print()
@@ -197,7 +197,7 @@ Examples:
         sys.exit(1)
     
     print()
-    print("✓ Setup complete!")
+    print("Setup complete!")
     print(f"   vcpkg root: {vcpkg_root}")
     print(f"   Use CMAKE_TOOLCHAIN_FILE={vcpkg_root}/scripts/buildsystems/vcpkg.cmake")
 
