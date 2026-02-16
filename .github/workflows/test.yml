@@ -35,6 +35,7 @@ jobs:
         run: |
           git clone https://github.com/microsoft/vcpkg
           ./vcpkg/bootstrap-vcpkg.sh
+          sudo apt install mono-complete
 
       - name: Install dependencies
         run: ./vcpkg/vcpkg install --triplet x64-linux
