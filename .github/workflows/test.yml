@@ -3,15 +3,16 @@ name: Test
 on:
   push:
 
+env:
+  VCPKG_BINARY_SOURCES: >-
+    clear;files,${{ github.workspace }}${{ matrix.os == 'windows-latest' && '\vcpkg-cache' || '/vcpkg-cache' }},readwrite
+
 jobs:
   build:
     name: Build (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
-      env:
-      VCPKG_BINARY_SOURCES: >-
-        clear;files,${{ github.workspace }}${{ matrix.os == 'windows-latest' && '\vcpkg-cache' || '/vcpkg-cache' }},readwrite
       matrix:
         include:
           - os: windows-latest
