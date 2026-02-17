@@ -23,7 +23,8 @@ jobs:
     env: 
       VCPKG_BINARY_SOURCES: >-
         clear;files,${{ github.workspace }}${{ matrix.os == 'windows-latest' && '\vcpkg-cache' || '/vcpkg-cache' }},readwrite
-      VCPKG_ROOT: ${{ matrix.os == 'windows-latest' && 'D:\a\vcpkg' || ${{ github.workspace }}'/vcpkg' }}
+      if ${{ matrix.os == 'windows-latest' }}:
+      VCPKG_ROOT: 'D:\a\vcpkg'
 
     steps:
       - uses: actions/checkout@v4
