@@ -38,4 +38,4 @@ jobs:
         run: ${{matrix.os == 'windows-latest' && 'vcpkg\bootstrap-vcpkg.bat' || './vcpkg/bootstrap-vcpkg.sh'}}
 
       - name: Install dependencies
-        run: ${{matrix.os == 'windows-latest' && 'vcpkg\vcpkg install --triplet ${matrix.triplet} --x-install-root ${GITHUB_WORKSPACE}\vcpkg-cache' || './vcpkg/vcpkg install --triplet ${matrix.triplet} --x-install-root ${GITHUB_WORKSPACE}/vcpkg-cache'}} 
+        run: ${{matrix.os == 'windows-latest' && 'vcpkg\vcpkg install' || './vcpkg/vcpkg install'}} --triplet ${{matrix.triplet}} --x-install-root ${{ github.workspace }}${{ matrix.os == 'windows-latest' && '\vcpkg-cache' || '/vcpkg-cache' }}
