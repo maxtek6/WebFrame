@@ -23,7 +23,7 @@ jobs:
     env: 
       VCPKG_BINARY_SOURCES: >-
         clear;files,${{ github.workspace }}${{ matrix.os == 'windows-latest' && '\vcpkg-cache' || '/vcpkg-cache' }},readwrite
-      VCPKG_ROOT: ${{ matrix.os == 'windows-latest' && 'X:\vcpkg' || 'vcpkg' }}
+      VCPKG_ROOT: ${{ matrix.os == 'windows-latest' && 'D:\a\vcpkg' || '${{ github.workspace }}/vcpkg' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -32,24 +32,27 @@ jobs:
         uses: ./.github/cache
         with:
           triplet: ${{ matrix.triplet }}
-      - name: Clone vcpkg
+      - name: Windows vcpkg clone
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: git clone https://github.com/microsoft/vcpkg D:\a\vcpkg
+        
+      - name: Posix vcpkg clone
+        if: ${{ matrix.os != 'windows-latest' }}
         run: git clone https://github.com/microsoft/vcpkg
       
       - name: Ubuntu Setup
         if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: sudo apt-get update && sudo apt-get install -y autoconf autoconf-archive automake libtool libltdl-dev
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y autoconf autoconf-archive automake libtool libltdl-dev 
+          sudo apt-get install '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-dev libegl1-mesa-dev
 
       - name: MacOS Setup
         if: ${{ matrix.os == 'macos-latest' }}
         run: brew install autoconf autoconf-archive automake libtool
 
-      - name: Windows Setup
-        if: ${{ matrix.os == 'windows-latest' }}
-        run: |
-          subst X: ${{ github.workspace }}
-
       - name: Bootstrap vcpkg
-        run: ${{matrix.os == 'windows-latest' && 'X:\vcpkg\bootstrap-vcpkg.bat' || './vcpkg/bootstrap-vcpkg.sh'}}
+        run: ${{matrix.os == 'windows-latest' && 'D:\a\vcpkg\bootstrap-vcpkg.bat' || './vcpkg/bootstrap-vcpkg.sh'}}
 
       - name: Install dependencies
-        run: ${{matrix.os == 'windows-latest' && 'X:\vcpkg\vcpkg install' || './vcpkg/vcpkg install'}} --triplet ${{matrix.triplet}} --x-install-root ${{ github.workspace }}${{ matrix.os == 'windows-latest' && '\vcpkg-cache' || '/vcpkg-cache' }}
+        run: ${{matrix.os == 'windows-latest' && 'D:\a\vcpkg\vcpkg install' || './vcpkg/vcpkg install'}} --triplet ${{matrix.triplet}} --x-install-root ${{ github.workspace }}${{ matrix.os == 'windows-latest' && '\vcpkg-cache' || '/vcpkg-cache' }}
