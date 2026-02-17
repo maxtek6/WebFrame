@@ -23,7 +23,8 @@ jobs:
     env: 
       VCPKG_BINARY_SOURCES: >-
         clear;files,${{ github.workspace }}${{ matrix.os == 'windows-latest' && '\vcpkg-cache' || '/vcpkg-cache' }},readwrite
-
+      VCPKG_ROOT: ${{ github.workspace }}${{ matrix.os == 'windows-latest' && '\vcpkg' || '/vcpkg' }}
+      
     steps:
       - uses: actions/checkout@v4
 
@@ -34,6 +35,14 @@ jobs:
       - name: Clone vcpkg
         run: git clone https://github.com/microsoft/vcpkg
       
+      - name: Ubuntu dependencies
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: sudo apt-get update && sudo apt-get install -y autoconf autoconf-archive automake libtool
+
+      - name: MacOS dependencies
+        if: ${{ matrix.os == 'macos-latest' }}
+        run: brew install autoconf autoconf-archive automake libtool
+
       - name: Bootstrap vcpkg
         run: ${{matrix.os == 'windows-latest' && 'vcpkg\bootstrap-vcpkg.bat' || './vcpkg/bootstrap-vcpkg.sh'}}
 
