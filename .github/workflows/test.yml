@@ -17,9 +17,6 @@ jobs:
           - os: ubuntu-latest
             triplet: x64-linux
             shell: bash
-          - os: macos-latest
-            triplet: x64-osx
-            shell: bash
     env: 
       VCPKG_BINARY_SOURCES: >-
         clear;files,${{ github.workspace }}${{ matrix.os == 'windows-latest' && '\vcpkg-cache' || '/vcpkg-cache' }},readwrite
@@ -55,12 +52,8 @@ jobs:
           sudo apt-get install -y libxcb-render0-dev libxcb-shape0-dev libxcb-shm0-dev libxcb-sync-dev libxcb-xfixes0-dev libxcb-xinerama0-dev
           sudo apt-get install -y libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libdbus-1-dev
 
-      - name: MacOS Setup
-        if: ${{ matrix.os == 'macos-latest' }}
-        run: brew install autoconf autoconf-archive automake libtool
-
       - name: Bootstrap vcpkg
         run: ${{matrix.os == 'windows-latest' && 'D:\a\vcpkg\bootstrap-vcpkg.bat' || './vcpkg/bootstrap-vcpkg.sh'}}
 
       - name: Install dependencies
-        run: ${{matrix.os == 'windows-latest' && 'D:\a\vcpkg\vcpkg install' || './vcpkg/vcpkg install'}} --triplet ${{matrix.triplet}} --x-install-root ${{ github.workspace }}${{ matrix.os == 'windows-latest' && '\vcpkg-cache' || '/vcpkg-cache' }} ${{ matrix.os == 'macos' && '--x-cmake-args=-DCMAKE_DISABLE_PRECOMPILE_HEADERS=ON' || ''}}
+        run: ${{matrix.os == 'windows-latest' && 'D:\a\vcpkg\vcpkg install' || './vcpkg/vcpkg install'}} --triplet ${{matrix.triplet}} --x-install-root ${{ github.workspace }}${{ matrix.os == 'windows-latest' && '\vcpkg-cache' || '/vcpkg-cache' }}
