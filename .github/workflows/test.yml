@@ -1,0 +1,61 @@
+name: Test
+
+on:
+  push:
+
+jobs:
+  build:
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            triplet: x64-windows
+            shell: powershell
+          - os: ubuntu-latest
+            triplet: x64-linux
+            shell: bash
+    env: 
+      VCPKG_BINARY_SOURCES: >-
+        clear;files,${{ github.workspace }}${{ matrix.os == 'windows-latest' && '\vcpkg-cache' || '/vcpkg-cache' }},readwrite
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Restore vcpkg cache
+        uses: ./.github/cache
+        with:
+          triplet: ${{ matrix.triplet }}
+
+      - name: Windows vcpkg clone
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: git clone https://github.com/microsoft/vcpkg D:\a\vcpkg
+        
+      - name: Set VCPKG_ROOT on Windows
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: echo "VCPKG_ROOT=D:\a\vcpkg" >> $GITHUB_ENV
+        shell: powershell
+
+      - name: Posix vcpkg clone
+        if: ${{ matrix.os != 'windows-latest' }}
+        run: |
+          ${{ github.workspace }}/.github/free_disk_space.sh
+          git clone https://github.com/microsoft/vcpkg
+      
+      - name: Ubuntu Setup
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y autoconf autoconf-archive automake libtool libltdl-dev 
+          sudo apt-get install -y '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-dev libegl1-mesa-dev
+          sudo apt-get install -y libsctp-dev libx11-dev libx11-xcb-dev libsm-dev libice-dev libxcb-icccm4-dev libxcb-image0-dev libxcb-keysyms1-dev libxcb-render-util0-dev
+          sudo apt-get install -y libxcb-render0-dev libxcb-shape0-dev libxcb-shm0-dev libxcb-sync-dev libxcb-xfixes0-dev libxcb-xinerama0-dev
+          sudo apt-get install -y libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libdbus-1-dev
+
+      - name: Bootstrap vcpkg
+        run: ${{matrix.os == 'windows-latest' && 'D:\a\vcpkg\bootstrap-vcpkg.bat' || './vcpkg/bootstrap-vcpkg.sh'}}
+
+      - name: Install dependencies
+        run: ${{matrix.os == 'windows-latest' && 'D:\a\vcpkg\vcpkg install' || './vcpkg/vcpkg install'}} --triplet ${{matrix.triplet}} --x-install-root ${{ github.workspace }}${{ matrix.os == 'windows-latest' && '\vcpkg-cache' || '/vcpkg-cache' }}
