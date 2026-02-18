@@ -63,4 +63,4 @@ jobs:
         run: ${{matrix.os == 'windows-latest' && 'D:\a\vcpkg\bootstrap-vcpkg.bat' || './vcpkg/bootstrap-vcpkg.sh'}}
 
       - name: Install dependencies
-        run: ${{matrix.os == 'windows-latest' && 'D:\a\vcpkg\vcpkg install' || './vcpkg/vcpkg install'}} --triplet ${{matrix.triplet}} --x-install-root ${{ github.workspace }}${{ matrix.os == 'windows-latest' && '\vcpkg-cache' || '/vcpkg-cache' }}
+        run: ${{matrix.os == 'windows-latest' && 'D:\a\vcpkg\vcpkg install' || './vcpkg/vcpkg install'}} --triplet ${{matrix.triplet}} --x-install-root ${{ github.workspace }}${{ matrix.os == 'windows-latest' && '\vcpkg-cache' || '/vcpkg-cache' }} ${{ matrix.os == 'macos' && '--x-cmake-args=-DCMAKE_DISABLE_PRECOMPILE_HEADERS=ON' || ''}}
