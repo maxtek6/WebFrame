@@ -1,3 +1,4 @@
+
 #!/usr/bin/env bash
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -44,4 +45,7 @@ df -h
 echo "Removing large directories"
 # deleting 15GB
 rm -rf /usr/share/dotnet/
+rm -rf /opt/hostedtoolcache
+rm -rf /opt/ghc
+sudo rm -rf /usr/local/lib/android
 df -h

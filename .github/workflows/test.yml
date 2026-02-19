@@ -41,12 +41,12 @@ jobs:
       - name: Posix vcpkg clone
         if: ${{ matrix.os != 'windows-latest' }}
         run: |
-          ${{ github.workspace }}/.github/free_disk_space.sh
           git clone https://github.com/microsoft/vcpkg
       
       - name: Ubuntu Setup
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: |
+          ${{ github.workspace }}/.github/free_disk_space.sh
           sudo apt-get update
           sudo apt-get install -y autoconf autoconf-archive automake libtool libltdl-dev 
           sudo apt-get install -y '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-dev libegl1-mesa-dev
@@ -58,4 +58,4 @@ jobs:
         run: ${{matrix.os == 'windows-latest' && 'D:\a\vcpkg\bootstrap-vcpkg.bat' || './vcpkg/bootstrap-vcpkg.sh'}}
 
       - name: Install dependencies
-        run: ${{matrix.os == 'windows-latest' && 'D:\a\vcpkg\vcpkg install' || './vcpkg/vcpkg install'}} --triplet ${{matrix.triplet}} --x-install-root ${{ github.workspace }}${{ matrix.os == 'windows-latest' && '\vcpkg-cache' || '/vcpkg-cache' }}
+        run: ${{matrix.os == 'windows-latest' && 'D:\a\vcpkg\vcpkg install' || './vcpkg/vcpkg install'}} --triplet ${{matrix.triplet}} --x-install-root ${{ github.workspace }}${{ matrix.os == 'windows-latest' && '\vcpkg-cache' || '/vcpkg-cache' }} --clean-buildtrees-after-build
