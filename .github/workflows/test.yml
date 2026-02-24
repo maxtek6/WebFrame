@@ -44,6 +44,7 @@ jobs:
       - name: Ubuntu drive mapping
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: |
+          sudo apt update && sudo apt install -y nfs-common
           sudo mkdir -p /mnt/webframe
-          sudo mount -t cifs //synology.tail718264.ts.net/WebFrame /mnt/webframe -o username=${{ secrets.CACHE_USER }},password=${{ secrets.CACHE_PASSWORD }},vers=3.0
+          sudo mount -nfs synology.tail718264.ts.net/WebFrame /mnt/webframe -o username=${{ secrets.CACHE_USER }},password=${{ secrets.CACHE_PASSWORD }}
           ls /mnt/webframe
