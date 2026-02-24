@@ -5,7 +5,6 @@
     "homepage": "https://github.com/maxtek6/webframe",
     "license": "LGPL-3.0-or-later",
     "dependencies": [
-        "qtwebview",
         "libevent"
     ]
 }

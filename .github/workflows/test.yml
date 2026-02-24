@@ -17,7 +17,7 @@ jobs:
             triplet: x64-linux
     env: 
       VCPKG_BINARY_SOURCES: >-
-        clear;files,${{ github.workspace }}${{ matrix.os == 'windows-latest' && '\vcpkg-cache' || '/vcpkg-cache' }},readwrite
+        clear;files,${{ github.workspace }}${{ matrix.os == 'windows-latest' && 'Z:\\vcpkg-cache' || '/mnt/webframe/vcpkg-cache' }},readwrite
 
     steps:
       - name: Checkout vcpkg
@@ -39,7 +39,6 @@ jobs:
         if: ${{ matrix.os == 'windows-latest' }}
         run: |
           net use Z: \\synology.tail718264.ts.net\WebFrame /user:${{ secrets.CACHE_USER }} "${{ secrets.CACHE_PASSWORD }}"
-          dir Z:\
 
       - name: Ubuntu drive mapping
         if: ${{ matrix.os == 'ubuntu-latest' }}
@@ -47,4 +46,13 @@ jobs:
           sudo apt update && sudo apt install cifs-utils
           sudo mkdir -p /mnt/webframe
           sudo mount -t cifs //synology.tail718264.ts.net/WebFrame /mnt/webframe -o username=${{ secrets.CACHE_USER }},password="${{ secrets.CACHE_PASSWORD }}"
-          ls /mnt/webframe
+
+      - name: Restore cache
+        uses: ./.github/cache
+        with:
+          triplet: ${{ matrix.triplet }}
+
+      - name: CMake Build
+        run: |
+          cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=${{ matrix.os == 'windows-latest' && 'D:\a\vcpkg\scripts\buildsystems\vcpkg.cmake' || 'vcpkg/scripts/buildsystems/vcpkg.cmake' }}
+          cmake --build build --config Release
