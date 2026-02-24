@@ -13,10 +13,8 @@ jobs:
         include:
           - os: windows-latest
             triplet: x64-windows
-            shell: powershell
           - os: ubuntu-latest
             triplet: x64-linux
-            shell: bash
     env: 
       VCPKG_BINARY_SOURCES: >-
         clear;files,${{ github.workspace }}${{ matrix.os == 'windows-latest' && '\vcpkg-cache' || '/vcpkg-cache' }},readwrite
@@ -24,15 +22,21 @@ jobs:
     steps:
       - name: Checkout vcpkg
         run:
-          git clone --branch 2026.01.16 https://github.com/microsoft/vcpkg ${{ matrix.os == 'windows-latest' && 'D:\a\vcpkg' || '/vcpkg' }}
+          git clone --branch 2026.01.16 https://github.com/microsoft/vcpkg ${{ matrix.os == 'windows-latest' && 'D:\a\vcpkg' || 'vcpkg' }}
 
       - name: Checkout WebFrame
         uses: actions/checkout@v4
       
-      - name: Tailscale
+      - name: Tailscale connect
         uses: tailscale/github-action@v4
         with:
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:ci
           version: latest
+      
+      - name: Windows drive mapping
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: |
+          net use Z: \\synology.tail718264.ts.net\WebFrame /user:${{ secrets.CACHE_USER }} ${{ secrets.CACHE_PASSWORD }}
+          dir Z:\
