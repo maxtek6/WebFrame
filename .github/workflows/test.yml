@@ -55,6 +55,7 @@ jobs:
       - name: Restore cache
         uses: ./.github/cache
         with:
+          path: ${{ matrix.os == 'windows-latest' && 'Z:\vcpkg-cache' || '/mnt/webframe/vcpkg-cache' }}
           triplet: ${{ matrix.triplet }}
 
       - name: CMake Build
