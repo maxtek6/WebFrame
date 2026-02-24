@@ -17,7 +17,7 @@ jobs:
             triplet: x64-linux
     env: 
       VCPKG_BINARY_SOURCES: >-
-        clear;files,${{ github.workspace }}${{ matrix.os == 'windows-latest' && 'Z:\\vcpkg-cache' || '/mnt/webframe/vcpkg-cache' }},readwrite
+        clear;files,${{ github.workspace }}${{ matrix.os == 'windows-latest' && 'Z:\vcpkg-cache' || '/mnt/webframe/vcpkg-cache' }},readwrite
 
     steps:
       - name: Windows vcpkg clone
@@ -59,5 +59,5 @@ jobs:
 
       - name: CMake Build
         run: |
-          cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=${{ matrix.os == 'windows-latest' && 'D:\a\vcpkg\scripts\buildsystems\vcpkg.cmake' || 'vcpkg/scripts/buildsystems/vcpkg.cmake' }}
+          cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=${{ matrix.os == 'windows-latest' && 'D:\a\vcpkg\scripts\buildsystems\vcpkg.cmake' || '${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake' }}
           cmake --build build --config Release
