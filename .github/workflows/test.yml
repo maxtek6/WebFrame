@@ -27,7 +27,7 @@ jobs:
       - name: Posix vcpkg clone
         if: ${{ matrix.os != 'windows-latest' }}
         run: |
-          git clone --branch 2026.01.16 https://github.com/microsoft/vcpkg
+          git clone --branch 2026.01.16 https://github.com/microsoft/vcpkg /home/runner/vcpkg
 
       - name: Checkout WebFrame
         uses: actions/checkout@v4
@@ -59,5 +59,5 @@ jobs:
 
       - name: CMake Build
         run: |
-          cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=${{ matrix.os == 'windows-latest' && 'D:\a\vcpkg\scripts\buildsystems\vcpkg.cmake' || format('{0}/vcpkg/scripts/buildsystems/vcpkg.cmake', github.workspace) }}
+          cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=${{ matrix.os == 'windows-latest' && 'D:\a\vcpkg\scripts\buildsystems\vcpkg.cmake' || '/home/runner/vcpkg/scripts/buildsystems/vcpkg.cmake' }}
           cmake --build build --config Release
