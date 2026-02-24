@@ -20,9 +20,14 @@ jobs:
         clear;files,${{ github.workspace }}${{ matrix.os == 'windows-latest' && 'Z:\\vcpkg-cache' || '/mnt/webframe/vcpkg-cache' }},readwrite
 
     steps:
-      - name: Checkout vcpkg
-        run:
-          git clone --branch 2026.01.16 https://github.com/microsoft/vcpkg ${{ matrix.os == 'windows-latest' && 'D:\a\vcpkg' || 'vcpkg' }}
+      - name: Windows vcpkg clone
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: git clone --branch 2026.01.16 https://github.com/microsoft/vcpkg D:\a\vcpkg
+        
+      - name: Posix vcpkg clone
+        if: ${{ matrix.os != 'windows-latest' }}
+        run: |
+          git clone --branch 2026.01.16 https://github.com/microsoft/vcpkg
 
       - name: Checkout WebFrame
         uses: actions/checkout@v4
