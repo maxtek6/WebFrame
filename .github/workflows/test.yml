@@ -40,3 +40,10 @@ jobs:
         run: |
           net use Z: \\synology.tail718264.ts.net\WebFrame /user:${{ secrets.CACHE_USER }} "${{ secrets.CACHE_PASSWORD }}"
           dir Z:\
+
+      - name: Ubuntu drive mapping
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |
+          sudo mkdir -p /mnt/webframe
+          sudo mount -t cifs //synology.tail718264.ts.net/WebFrame /mnt/webframe -o username=${{ secrets.CACHE_USER }},password=${{ secrets.CACHE_PASSWORD }},vers=3.0
+          ls /mnt/webframe
