@@ -13,11 +13,13 @@ jobs:
         include:
           - os: windows-latest
             triplet: x64-windows
+            cache_path: Z:\vcpkg-x64-windows
           - os: ubuntu-latest
             triplet: x64-linux
+            cache_path: /mnt/webframe/vcpkg-x64-linux
     env: 
       VCPKG_BINARY_SOURCES: >-
-        clear;files,${{ matrix.os == 'windows-latest' && 'Z:\vcpkg-cache' || '/mnt/webframe/vcpkg-cache' }},readwrite
+        clear;files,${{ matrix.cache_path }},readwrite
 
     steps:
       - name: Windows vcpkg clone
@@ -55,7 +57,7 @@ jobs:
       - name: Restore cache
         uses: ./.github/cache
         with:
-          path: ${{ matrix.os == 'windows-latest' && 'Z:\vcpkg-cache' || '/mnt/webframe/vcpkg-cache' }}
+          path: ${{ matrix.cache_path }}
           triplet: ${{ matrix.triplet }}
 
       - name: CMake Build
