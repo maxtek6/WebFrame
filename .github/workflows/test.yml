@@ -54,12 +54,6 @@ jobs:
           sudo mkdir -p /mnt/webframe
           sudo mount -t cifs //synology.tail718264.ts.net/WebFrame /mnt/webframe -o username=${{ secrets.CACHE_USER }},password="${{ secrets.CACHE_PASSWORD }}"
 
-      - name: Restore cache
-        uses: ./.github/cache
-        with:
-          path: ${{ matrix.cache_path }}
-          triplet: ${{ matrix.triplet }}
-
       - name: CMake Build
         run: |
           cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=${{ matrix.os == 'windows-latest' && 'D:\a\vcpkg\scripts\buildsystems\vcpkg.cmake' || '/home/runner/vcpkg/scripts/buildsystems/vcpkg.cmake' }}
