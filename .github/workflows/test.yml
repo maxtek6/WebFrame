@@ -38,5 +38,5 @@ jobs:
       - name: Windows drive mapping
         if: ${{ matrix.os == 'windows-latest' }}
         run: |
-          net use Z: \\synology.tail718264.ts.net\WebFrame /user:${{ secrets.CACHE_USER }} ${{ secrets.CACHE_PASSWORD }}
+          net use Z: \\synology.tail718264.ts.net\WebFrame /user:${{ secrets.CACHE_USER }} "${{ secrets.CACHE_PASSWORD }}"
           dir Z:\
