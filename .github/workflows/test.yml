@@ -23,11 +23,8 @@ jobs:
 
     steps:
       - name: Checkout vcpkg
-        uses: actions/checkout@v4
-        with:
-          repository: microsoft/vcpkg
-          ref: '2026.01.16'
-          path: ${{ matrix.os == 'windows-latest' && '..\vcpkg' || '../vcpkg' }}
+        run:
+          git clone --branch 2026.01.16 https://github.com/microsoft/vcpkg ${{ matrix.os == 'windows-latest' && 'D:\a\vcpkg' || '/vcpkg' }}
 
       - name: Checkout WebFrame
         uses: actions/checkout@v4
