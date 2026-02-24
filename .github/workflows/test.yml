@@ -27,7 +27,7 @@ jobs:
         with:
           repository: microsoft/vcpkg
           ref: '2026.01.16'
-          path: ${{ matrix.os == 'windows-latest' && 'D:\a\vcpkg' || '/vcpkg' }}
+          path: ${{ matrix.os == 'windows-latest' && '..\vcpkg' || '../vcpkg' }}
 
       - name: Checkout WebFrame
         uses: actions/checkout@v4
