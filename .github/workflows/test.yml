@@ -46,5 +46,5 @@ jobs:
         run: |
           sudo apt update && sudo apt install -y nfs-common
           sudo mkdir -p /mnt/webframe
-          sudo mount -nfs synology.tail718264.ts.net/WebFrame /mnt/webframe -o username=${{ secrets.CACHE_USER }},password=${{ secrets.CACHE_PASSWORD }}
+          sudo mount -nfs synology.tail718264.ts.net/WebFrame /mnt/webframe -o username=${{ secrets.CACHE_USER }},password="${{ secrets.CACHE_PASSWORD }}"
           ls /mnt/webframe
