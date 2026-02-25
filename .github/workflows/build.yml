@@ -13,26 +13,24 @@ jobs:
         include:
           - os: windows-latest
             triplet: x64-windows
+            vcpkg_root: D:\a\vcpkg
             cache_path: Z:\vcpkg-x64-windows
           - os: ubuntu-latest
             triplet: x64-linux
+            vcpkg_root: /home/runner/vcpkg
             cache_path: /mnt/webframe/vcpkg-x64-linux
           - os: macos-latest
             triplet: x64-osx
-            cache_path: /Users/runner/hostedtoolcache/vcpkg-x64-osx
+            vcpkg_root: /Users/runner/work/vcpkg
+            cache_path: /Volumes/WebFrame/vcpkg-x64-osx
     env: 
       VCPKG_BINARY_SOURCES: >-
         clear;files,${{ matrix.cache_path }},readwrite
 
     steps:
-      - name: Windows vcpkg clone
-        if: ${{ matrix.os == 'windows-latest' }}
-        run: git clone --branch 2026.01.16 https://github.com/microsoft/vcpkg D:\a\vcpkg
-        
-      - name: Posix vcpkg clone
-        if: ${{ matrix.os != 'windows-latest' }}
+      - name: Checkout vcpkg
         run: |
-          git clone --branch 2026.01.16 https://github.com/microsoft/vcpkg ${{github.workspace}}/vcpkg
+          git clone --branch 2026.01.16 https://github.com/microsoft/vcpkg ${{ matrix.vcpkg_root }}
 
       - name: Checkout WebFrame
         uses: actions/checkout@v4
@@ -60,17 +58,10 @@ jobs:
       - name: MacOS drive mapping
         if: ${{ matrix.os == 'macos-latest' }}
         run: |
-          sudo mkdir -p /Users/runner/hostedtoolcache
-          sudo mount -t smbfs //${{ secrets.CACHE_USER }}:"${{ secrets.CACHE_PASSWORD }}"@synology.tail718264.ts.net/WebFrame /Users/runner/hostedtoolcache/vcpkg-x64-osx
+          sudo mkdir -p /Volumes/WebFrame
+          sudo mount -t smbfs //${{ secrets.CACHE_USER }}:"${{ secrets.CACHE_PASSWORD }}"@synology.tail718264.ts.net/WebFrame /Volumes/WebFrame
 
-      - name: Windows build
-        if: ${{ matrix.os == 'windows-latest' }}
+      - name: CMake build
         run: |
-          cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=D:\a\vcpkg\scripts\buildsystems\vcpkg.cmake
-          cmake --build build
-
-      - name: Posix build
-        if: ${{ matrix.os != 'windows-latest' }}
-        run: |
-          cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
+          cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=${{ matrix.vcpkg_root }}/scripts/buildsystems/vcpkg.cmake
           cmake --build build
