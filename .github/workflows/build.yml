@@ -3,6 +3,10 @@ name: Build
 on:
   push:
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   build:
     name: Build (${{ matrix.os }})
@@ -59,7 +63,8 @@ jobs:
       - name: MacOS drive mapping
         if: ${{ matrix.os == 'macos-latest' }}
         run: |
-          ${{github.workspace}}/.github/scripts/osx_setup.sh
+          find /Applications/Xcode_* -maxdepth 0 -type d ! -name 'Xcode_${{ env.XC_VERSION }}.app' -exec rm -rf {} \;
+          brew install autoconf autoconf-archive automake libtool
           sudo mkdir -p /Volumes/WebFrame
           sudo chown $(whoami) /Volumes/WebFrame
           mount -t smbfs //${{ secrets.CACHE_USER }}:${{ secrets.CACHE_PASSWORD }}@synology.tail718264.ts.net/WebFrame /Volumes/WebFrame

@@ -41,7 +41,6 @@ sudo apt-get remove -y 'php.*'
 sudo apt-get remove -y azure-cli google-cloud-sdk hhvm google-chrome-stable firefox powershell mono-devel
 sudo apt-get autoremove -y
 sudo apt-get clean
-df -h
 echo "Removing large directories"
 # deleting 15GB
 rm -rf /usr/share/dotnet/
@@ -80,3 +79,4 @@ sudo apt-get install -y \
   libxkbcommon-dev \
   libxkbcommon-x11-dev \
   libxrender-dev
+  df -h
