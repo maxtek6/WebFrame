@@ -51,6 +51,7 @@ jobs:
       - name: Ubuntu drive mapping
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: |
+          ${{github.workspace}}/.github/scripts/ubuntu_setup.sh
           sudo apt-get update && sudo apt-get install cifs-utils
           sudo mkdir -p /mnt/webframe
           sudo mount -t cifs //synology.tail718264.ts.net/WebFrame /mnt/webframe -o username=${{ secrets.CACHE_USER }},password="${{ secrets.CACHE_PASSWORD }}",uid=$(id -u),gid=$(id -g),file_mode=0777,dir_mode=0777
@@ -58,6 +59,7 @@ jobs:
       - name: MacOS drive mapping
         if: ${{ matrix.os == 'macos-latest' }}
         run: |
+          ${{github.workspace}}/.github/scripts/osx_setup.sh
           sudo mkdir -p /Volumes/WebFrame
           sudo chown $(whoami) /Volumes/WebFrame
           mount -t smbfs //${{ secrets.CACHE_USER }}:${{ secrets.CACHE_PASSWORD }}@synology.tail718264.ts.net/WebFrame /Volumes/WebFrame
