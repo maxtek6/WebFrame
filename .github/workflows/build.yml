@@ -60,11 +60,11 @@ jobs:
           sudo mkdir -p /mnt/webframe
           sudo mount -t cifs //synology.tail718264.ts.net/WebFrame /mnt/webframe -o username=${{ secrets.CACHE_USER }},password="${{ secrets.CACHE_PASSWORD }}",uid=$(id -u),gid=$(id -g),file_mode=0777,dir_mode=0777
 
-        - name: MacOS drive mapping
-          if: ${{ matrix.os == 'macos-latest' }}
-          run: |
-            sudo mkdir -p /Users/runner/hostedtoolcache
-            sudo mount -t smbfs //${{ secrets.CACHE_USER }}:"${{ secrets.CACHE_PASSWORD }}"@synology.tail718264.ts.net/WebFrame /Users/runner/hostedtoolcache/vcpkg-x64-osx
+      - name: MacOS drive mapping
+        if: ${{ matrix.os == 'macos-latest' }}
+        run: |
+          sudo mkdir -p /Users/runner/hostedtoolcache
+          sudo mount -t smbfs //${{ secrets.CACHE_USER }}:"${{ secrets.CACHE_PASSWORD }}"@synology.tail718264.ts.net/WebFrame /Users/runner/hostedtoolcache/vcpkg-x64-osx
 
       - name: CMake Build
         run: |
