@@ -64,11 +64,13 @@ jobs:
           sudo mount -t smbfs //${{ secrets.CACHE_USER }}:"${{ secrets.CACHE_PASSWORD }}"@synology.tail718264.ts.net/WebFrame /Users/runner/hostedtoolcache/vcpkg-x64-osx
 
       - name: Windows build
+        if: ${{ matrix.os == 'windows-latest' }}
         run: |
           cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=D:\a\vcpkg\scripts\buildsystems\vcpkg.cmake
           cmake --build build
 
       - name: Posix build
+        if: ${{ matrix.os != 'windows-latest' }}
         run: |
           cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
           cmake --build build
