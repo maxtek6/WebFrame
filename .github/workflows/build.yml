@@ -59,7 +59,7 @@ jobs:
         if: ${{ matrix.os == 'macos-latest' }}
         run: |
           sudo mkdir -p /Volumes/WebFrame
-          echo "${{ secrets.CACHE_PASSWORD }}" | sudo mount -t smbfs //${{ secrets.CACHE_USER }}@synology.tail718264.ts.net/WebFrame /Volumes/WebFrame
+          sudo mount -t smbfs //${{ secrets.CACHE_USER }}:${{ secrets.CACHE_PASSWORD }}@synology.tail718264.ts.net/WebFrame /Volumes/WebFrame
 
       - name: CMake build
         run: |
