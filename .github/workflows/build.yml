@@ -1,4 +1,4 @@
-name: Test
+name: Build
 
 on:
   push:
@@ -13,10 +13,16 @@ jobs:
         include:
           - os: windows-latest
             triplet: x64-windows
+            vcpkg_root: D:\a\vcpkg
             cache_path: Z:\vcpkg-x64-windows
           - os: ubuntu-latest
             triplet: x64-linux
+            vcpkg_root: ${{ github.workspace }}/vcpkg
             cache_path: /mnt/webframe/vcpkg-x64-linux
+          - os: macos-latest
+            triplet: x64-osx
+            vcpkg_root: ${{ github.workspace }}/vcpkg
+            cache_path: /Users/runner/hostedtoolcache/vcpkg-x64-osx
     env: 
       VCPKG_BINARY_SOURCES: >-
         clear;files,${{ matrix.cache_path }},readwrite
@@ -24,12 +30,12 @@ jobs:
     steps:
       - name: Windows vcpkg clone
         if: ${{ matrix.os == 'windows-latest' }}
-        run: git clone --branch 2026.01.16 https://github.com/microsoft/vcpkg D:\a\vcpkg
+        run: git clone --branch 2026.01.16 https://github.com/microsoft/vcpkg ${{ matrix.vcpkg_root }}
         
       - name: Posix vcpkg clone
         if: ${{ matrix.os != 'windows-latest' }}
         run: |
-          git clone --branch 2026.01.16 https://github.com/microsoft/vcpkg /home/runner/vcpkg
+          git clone --branch 2026.01.16 https://github.com/microsoft/vcpkg ${{ matrix.vcpkg_root }}
 
       - name: Checkout WebFrame
         uses: actions/checkout@v4
@@ -50,11 +56,17 @@ jobs:
       - name: Ubuntu drive mapping
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: |
-          sudo apt update && sudo apt install cifs-utils
+          sudo apt-get update && sudo apt-get install cifs-utils
           sudo mkdir -p /mnt/webframe
           sudo mount -t cifs //synology.tail718264.ts.net/WebFrame /mnt/webframe -o username=${{ secrets.CACHE_USER }},password="${{ secrets.CACHE_PASSWORD }}",uid=$(id -u),gid=$(id -g),file_mode=0777,dir_mode=0777
 
+        - name: MacOS drive mapping
+          if: ${{ matrix.os == 'macos-latest' }}
+          run: |
+            sudo mkdir -p /Users/runner/hostedtoolcache
+            sudo mount -t smbfs //${{ secrets.CACHE_USER }}:"${{ secrets.CACHE_PASSWORD }}"@synology.tail718264.ts.net/WebFrame /Users/runner/hostedtoolcache/vcpkg-x64-osx
+
       - name: CMake Build
         run: |
-          cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=${{ matrix.os == 'windows-latest' && 'D:\a\vcpkg\scripts\buildsystems\vcpkg.cmake' || '/home/runner/vcpkg/scripts/buildsystems/vcpkg.cmake' }}
-          cmake --build build --config Release
+          cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=${{ matrix.vcpkg_root }}/scripts/buildsystems/vcpkg.cmake
+          cmake --build build
