@@ -13,15 +13,12 @@ jobs:
         include:
           - os: windows-latest
             triplet: x64-windows
-            vcpkg_root: D:\a\vcpkg
             cache_path: Z:\vcpkg-x64-windows
           - os: ubuntu-latest
             triplet: x64-linux
-            vcpkg_root: ${{ github.workspace }}/vcpkg
             cache_path: /mnt/webframe/vcpkg-x64-linux
           - os: macos-latest
             triplet: x64-osx
-            vcpkg_root: ${{ github.workspace }}/vcpkg
             cache_path: /Users/runner/hostedtoolcache/vcpkg-x64-osx
     env: 
       VCPKG_BINARY_SOURCES: >-
@@ -30,12 +27,12 @@ jobs:
     steps:
       - name: Windows vcpkg clone
         if: ${{ matrix.os == 'windows-latest' }}
-        run: git clone --branch 2026.01.16 https://github.com/microsoft/vcpkg ${{ matrix.vcpkg_root }}
+        run: git clone --branch 2026.01.16 https://github.com/microsoft/vcpkg D:\a\vcpkg
         
       - name: Posix vcpkg clone
         if: ${{ matrix.os != 'windows-latest' }}
         run: |
-          git clone --branch 2026.01.16 https://github.com/microsoft/vcpkg ${{ matrix.vcpkg_root }}
+          git clone --branch 2026.01.16 https://github.com/microsoft/vcpkg ${{github.workspace}}/vcpkg
 
       - name: Checkout WebFrame
         uses: actions/checkout@v4
@@ -66,7 +63,12 @@ jobs:
           sudo mkdir -p /Users/runner/hostedtoolcache
           sudo mount -t smbfs //${{ secrets.CACHE_USER }}:"${{ secrets.CACHE_PASSWORD }}"@synology.tail718264.ts.net/WebFrame /Users/runner/hostedtoolcache/vcpkg-x64-osx
 
-      - name: CMake Build
+      - name: Windows build
         run: |
-          cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=${{ matrix.vcpkg_root }}/scripts/buildsystems/vcpkg.cmake
+          cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=D:\a\vcpkg\scripts\buildsystems\vcpkg.cmake
+          cmake --build build
+
+      - name: Posix build
+        run: |
+          cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
           cmake --build build
