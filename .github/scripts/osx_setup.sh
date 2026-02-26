@@ -1,1 +1,1 @@
-brew install autoconf autoconf-archive automake libtool
+brew install autoconf autoconf-archive automake libtool ninja clang
