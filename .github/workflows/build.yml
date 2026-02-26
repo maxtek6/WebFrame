@@ -1,7 +1,7 @@
 name: Build
 
 on:
-  push:
+  push: [master]
 
 permissions:
   contents: write
