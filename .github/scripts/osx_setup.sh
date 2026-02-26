@@ -1,2 +1,1 @@
-find /Applications/Xcode_* -maxdepth 0 -type d ! -name 'Xcode_${{ env.XC_VERSION }}.app' -exec rm -rf {} \;
-brew install autoconf autoconf-archive automake libtool gcc make bzip2
+brew install autoconf autoconf-archive automake libtool
