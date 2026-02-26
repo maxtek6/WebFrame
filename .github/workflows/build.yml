@@ -26,7 +26,7 @@ jobs:
             vcpkg_root: /Users/runner/work/vcpkg
     env: 
       VCPKG_BINARY_SOURCES: >-
-        clear;http,http://synology.tail718264.ts.net:12345,readwrite
+        clear;http,http://${{secrets.TS_IPV4}}:12345,readwrite
 
     steps:
       - name: Checkout vcpkg
@@ -49,6 +49,7 @@ jobs:
         with:
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          args: --accept-dns=false
           tags: tag:ci
           version: latest
 
