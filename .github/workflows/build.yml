@@ -1,0 +1,66 @@
+name: Build
+
+on:
+  push: [master]
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build:
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            triplet: x64-windows
+            vcpkg_root: D:\a\vcpkg
+          - os: ubuntu-latest
+            triplet: x64-linux
+            vcpkg_root: /home/runner/vcpkg
+          - os: macos-latest
+            triplet: x64-osx
+            vcpkg_root: /Users/runner/work/vcpkg
+    env: 
+      VCPKG_BINARY_SOURCES: >-
+        clear;http,http://${{secrets.TS_IPV4}}:12345,readwrite
+
+    steps:
+      - name: Tailscale connect (MacOS)
+        if: matrix.os == 'macos-latest'
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+
+      - name: Tailscale connect (Linux/Windows)
+        if: matrix.os != 'macos-latest'
+        uses: tailscale/github-action@v4
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+  
+      - name: Checkout vcpkg
+        run: |
+          git clone --branch 2026.01.16 https://github.com/microsoft/vcpkg ${{ matrix.vcpkg_root }}
+
+      - name: Checkout WebFrame
+        uses: actions/checkout@v4
+
+      - name: Ubuntu setup
+        if: matrix.os == 'ubuntu-latest'
+        run: ./.github/scripts/ubuntu_setup.sh
+
+      - name: MacOS setup
+        if: matrix.os == 'macos-latest'
+        run: ./.github/scripts/osx_setup.sh
+
+      - name: CMake build
+        run: |
+          cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=${{ matrix.vcpkg_root }}/scripts/buildsystems/vcpkg.cmake
+          cmake --build build
