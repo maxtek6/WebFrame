@@ -49,7 +49,7 @@ jobs:
         with:
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
-          additional-args: ${{ matrix.os == 'macos-latest' && '--accept-dns=false' || '' }}
+          args: --accept-dns=false
           tags: tag:ci
           version: latest
 
