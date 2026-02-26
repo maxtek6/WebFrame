@@ -15,12 +15,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-#          - os: windows-latest
-#            triplet: x64-windows
-#            vcpkg_root: D:\a\vcpkg
-#          - os: ubuntu-latest
-#            triplet: x64-linux
-#            vcpkg_root: /home/runner/vcpkg
+          - os: windows-latest
+            triplet: x64-windows
+            vcpkg_root: D:\a\vcpkg
+          - os: ubuntu-latest
+            triplet: x64-linux
+            vcpkg_root: /home/runner/vcpkg
           - os: macos-latest
             triplet: x64-osx
             vcpkg_root: /Users/runner/work/vcpkg
@@ -29,8 +29,17 @@ jobs:
         clear;http,http://${{secrets.TS_IPV4}}:12345,readwrite
 
     steps:
-      - name: Tailscale connect
+      - name: Tailscale connect (MacOS)
+        if: matrix.os == 'macos-latest'
         uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+
+      - name: Tailscale connect (Linux/Windows)
+        if: matrix.os != 'macos-latest'
+        uses: tailscale/github-action@v4
         with:
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
