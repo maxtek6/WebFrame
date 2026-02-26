@@ -64,6 +64,7 @@ jobs:
         if: ${{ matrix.os == 'macos-latest' }}
         run: |
           find /Applications/Xcode_* -maxdepth 0 -type d ! -name 'Xcode_${{ env.XC_VERSION }}.app' -exec rm -rf {} \;
+          brew update
           brew install autoconf autoconf-archive automake libtool
           sudo mkdir -p /Volumes/WebFrame
           sudo chown $(whoami) /Volumes/WebFrame
