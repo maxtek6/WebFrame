@@ -39,6 +39,12 @@ jobs:
       - name: Checkout WebFrame
         uses: actions/checkout@v4
       
+      - name: MacOS brew packages
+        if: ${{ matrix.os == 'macos-latest' }}
+        run: |
+          brew update
+          brew install autoconf autoconf-archive automake libtool
+
       - name: Tailscale connect
         uses: tailscale/github-action@v4
         with:
@@ -64,8 +70,6 @@ jobs:
         if: ${{ matrix.os == 'macos-latest' }}
         run: |
           find /Applications/Xcode_* -maxdepth 0 -type d ! -name 'Xcode_${{ env.XC_VERSION }}.app' -exec rm -rf {} \;
-          brew update
-          brew install autoconf autoconf-archive automake libtool
           sudo mkdir -p /Volumes/WebFrame
           sudo chown $(whoami) /Volumes/WebFrame
           mount -t smbfs //${{ secrets.CACHE_USER }}:${{ secrets.CACHE_PASSWORD }}@synology.tail718264.ts.net/WebFrame /Volumes/WebFrame
