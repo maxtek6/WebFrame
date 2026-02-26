@@ -18,15 +18,12 @@ jobs:
           - os: windows-latest
             triplet: x64-windows
             vcpkg_root: D:\a\vcpkg
-            cache_path: Z:\vcpkg-x64-windows
           - os: ubuntu-latest
             triplet: x64-linux
             vcpkg_root: /home/runner/vcpkg
-            cache_path: /mnt/webframe/vcpkg-x64-linux
           - os: macos-latest
             triplet: x64-osx
             vcpkg_root: /Users/runner/work/vcpkg
-            cache_path: /Volumes/WebFrame/vcpkg-x64-osx
     env: 
       VCPKG_BINARY_SOURCES: >-
         clear;http,http://synology.tail718264.ts.net:12345,readwrite
@@ -38,6 +35,14 @@ jobs:
 
       - name: Checkout WebFrame
         uses: actions/checkout@v4
+
+      - name: Ubuntu setup
+        if: matrix.os == 'ubuntu-latest'
+        run: ./.github/scripts/ubuntu_setup.sh
+
+      - name: MacOS setup
+        if: matrix.os == 'macos-latest'
+        run: ./.github/scripts/osx_setup.sh
 
       - name: Tailscale connect
         uses: tailscale/github-action@v4
