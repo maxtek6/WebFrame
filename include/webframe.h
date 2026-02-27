@@ -16,14 +16,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef WEBFRAME_HPP
-#define WEBFRAME_HPP
 
-#include <webframe.h>
+#ifndef WEBFRAME_H
+#define WEBFRAME_H
 
-class WebFrameApplication
-{
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-};
+typedef struct WebFrameApplication WebFrameApplication;
+
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

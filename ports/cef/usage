@@ -1,0 +1,13 @@
+cef provides CMake targets:
+
+    find_package(CEF CONFIG REQUIRED)
+    target_link_libraries(main PRIVATE CEF::CEF)
+
+Individual targets are also available:
+
+    CEF::wrapper  – static libcef_dll_wrapper
+    CEF::lib      – prebuilt libcef shared library
+
+The CEF resource directory (PAK files, locales) is available as:
+
+    ${CEF_RESOURCE_DIR}
