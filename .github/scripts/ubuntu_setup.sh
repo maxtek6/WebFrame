@@ -76,6 +76,7 @@ sudo apt-get install -y \
   libxcb-xinerama0-dev \
   libxcb-xkb-dev \
   libxi-dev \
+  libxtst-dev \
   libxkbcommon-dev \
   libxkbcommon-x11-dev \
   libxrender-dev

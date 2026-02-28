@@ -5,7 +5,7 @@
     "description": "Chromium Embedded Framework (CEF) - A framework for embedding Chromium-based browsers in other applications.",
     "homepage": "https://bitbucket.org/chromiumembedded/cef",
     "license": "BSD-3-Clause",
-    "supports": "x64 & (linux | osx)",
+    "supports": "!windows",
     "dependencies": [
         {
             "name": "vcpkg-cmake",
