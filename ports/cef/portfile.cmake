@@ -40,16 +40,14 @@ vcpkg_cmake_configure(SOURCE_PATH "${SOURCE_PATH}")
 vcpkg_cmake_install()
 
 # ---------------------------------------------------------------------------
-# Install prebuilt CEF shared library
+# Install prebuilt CEF static library
 # ---------------------------------------------------------------------------
 if(VCPKG_TARGET_IS_LINUX)
-    file(GLOB _cef_sos "${SOURCE_PATH}/Release/*.so" "${SOURCE_PATH}/Release/*.so.*")
-    file(GLOB _cef_bins "${SOURCE_PATH}/Release/*.bin")
-    file(INSTALL ${_cef_sos}  DESTINATION "${CURRENT_PACKAGES_DIR}/lib")
-    file(INSTALL ${_cef_bins} DESTINATION "${CURRENT_PACKAGES_DIR}/lib")
+    file(GLOB _cef_static "${SOURCE_PATH}/Release/*.a")
+    file(INSTALL ${_cef_static} DESTINATION "${CURRENT_PACKAGES_DIR}/lib")
 elseif(VCPKG_TARGET_IS_OSX)
-    file(INSTALL "${SOURCE_PATH}/Release/Chromium Embedded Framework.framework"
-         DESTINATION "${CURRENT_PACKAGES_DIR}/lib")
+    file(GLOB _cef_static "${SOURCE_PATH}/Release/*.a")
+    file(INSTALL ${_cef_static} DESTINATION "${CURRENT_PACKAGES_DIR}/lib")
 endif()
 
 # ---------------------------------------------------------------------------

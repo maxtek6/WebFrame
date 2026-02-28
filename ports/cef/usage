@@ -6,7 +6,7 @@ cef provides CMake targets:
 Individual targets are also available:
 
     CEF::wrapper  – static libcef_dll_wrapper
-    CEF::lib      – prebuilt libcef shared library
+    CEF::lib      – prebuilt libcef_static static library
 
 The CEF resource directory (PAK files, locales) is available as:
 

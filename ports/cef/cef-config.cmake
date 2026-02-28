@@ -2,7 +2,7 @@
 #
 # Provides the following imported targets:
 #   CEF::wrapper  – static libcef_dll_wrapper (compiled from source)
-#   CEF::lib      – prebuilt libcef shared library
+#   CEF::lib      – prebuilt libcef_static static library
 #   CEF::CEF      – convenience interface that links both
 #
 # Variables:
@@ -43,25 +43,32 @@ if(NOT TARGET CEF::wrapper)
     )
 endif()
 
-# ---------- CEF::lib (prebuilt shared) ----------
+# ---------- CEF::lib (prebuilt static) ----------
 if(NOT TARGET CEF::lib)
-    if(APPLE)
-        add_library(CEF::lib SHARED IMPORTED)
-        set(_CEF_FW "${_CEF_ROOT}/lib/Chromium Embedded Framework.framework")
-        if(EXISTS "${_CEF_FW}")
-            set_target_properties(CEF::lib PROPERTIES
-                IMPORTED_LOCATION "${_CEF_FW}/Chromium Embedded Framework"
-            )
-        endif()
-    else()
-        add_library(CEF::lib SHARED IMPORTED)
-        find_library(_CEF_SO NAMES cef PATHS "${_CEF_ROOT}/lib" NO_DEFAULT_PATH)
-        if(_CEF_SO)
-            set_target_properties(CEF::lib PROPERTIES
-                IMPORTED_LOCATION "${_CEF_SO}"
-                IMPORTED_NO_SONAME TRUE
-            )
-        endif()
+    add_library(CEF::lib STATIC IMPORTED)
+
+    find_library(_CEF_STATIC_RELEASE
+        NAMES cef_static
+        PATHS "${_CEF_ROOT}/lib"
+        NO_DEFAULT_PATH
+    )
+    find_library(_CEF_STATIC_DEBUG
+        NAMES cef_static
+        PATHS "${_CEF_ROOT}/debug/lib"
+        NO_DEFAULT_PATH
+    )
+
+    if(_CEF_STATIC_RELEASE)
+        set_property(TARGET CEF::lib APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+        set_target_properties(CEF::lib PROPERTIES
+            IMPORTED_LOCATION_RELEASE "${_CEF_STATIC_RELEASE}"
+        )
+    endif()
+    if(_CEF_STATIC_DEBUG)
+        set_property(TARGET CEF::lib APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
+        set_target_properties(CEF::lib PROPERTIES
+            IMPORTED_LOCATION_DEBUG "${_CEF_STATIC_DEBUG}"
+        )
     endif()
 endif()
 
