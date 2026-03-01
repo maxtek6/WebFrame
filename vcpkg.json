@@ -13,6 +13,7 @@
             "name": "wxwidgets",
             "features": ["webview"]
         },
-        "libevent"
+        "libevent",
+        "hyperpage"
     ]
 }

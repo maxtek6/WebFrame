@@ -1,0 +1,11 @@
+hyperpage provides CMake targets:
+
+    find_package(hyperpage CONFIG REQUIRED)
+    target_link_libraries(main PRIVATE hyperpage::hyperpage)
+
+hyperpage also provides the hyperpack command-line utility:
+
+    hyperpack [--output <file>] [--verbose] <directories>...
+
+    Packs files from the specified directories into a hyperpage SQLite database.
+    The default output file is "hyperpage.db".
