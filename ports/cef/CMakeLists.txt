@@ -31,7 +31,7 @@ target_include_directories(cef_dll_wrapper
 target_compile_definitions(cef_dll_wrapper PRIVATE WRAPPING_CEF_SHARED)
 
 set_target_properties(cef_dll_wrapper PROPERTIES
-    CXX_STANDARD 20
+    CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
     POSITION_INDEPENDENT_CODE ON
 )

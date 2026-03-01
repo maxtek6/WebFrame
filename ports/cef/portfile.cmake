@@ -2,7 +2,7 @@
 # (libcef_dll_wrapper) that must be compiled. This port downloads the official
 # CEF binary distribution, builds the wrapper, and installs everything.
 
-set(CEF_VERSION "145.0.27+g4ddda2e+chromium-145.0.7632.117")
+set(CEF_VERSION "122.1.10+gc902316+chromium-122.0.6261.112")
 
 # ---------------------------------------------------------------------------
 # Platform-specific archive selection (non-Windows only)
@@ -40,15 +40,31 @@ vcpkg_cmake_configure(SOURCE_PATH "${SOURCE_PATH}")
 vcpkg_cmake_install()
 
 # ---------------------------------------------------------------------------
-# Install prebuilt CEF static library
+# Install prebuilt CEF shared library and helpers
 # ---------------------------------------------------------------------------
 if(VCPKG_TARGET_IS_LINUX)
-    file(GLOB _cef_static "${SOURCE_PATH}/Release/*.a")
-    file(INSTALL ${_cef_static} DESTINATION "${CURRENT_PACKAGES_DIR}/lib")
+    file(INSTALL "${SOURCE_PATH}/Release/libcef.so" DESTINATION "${CURRENT_PACKAGES_DIR}/lib")
+    # Also install EGL/GLES/Vulkan helper libraries if present
+    file(GLOB _cef_helpers "${SOURCE_PATH}/Release/libEGL.so" "${SOURCE_PATH}/Release/libGLESv2.so"
+         "${SOURCE_PATH}/Release/libvk_swiftshader.so" "${SOURCE_PATH}/Release/libvulkan.so.1")
+    if(_cef_helpers)
+        file(INSTALL ${_cef_helpers} DESTINATION "${CURRENT_PACKAGES_DIR}/lib")
+    endif()
+    # Install v8 snapshot and sandbox helper
+    file(GLOB _cef_data "${SOURCE_PATH}/Release/*.bin" "${SOURCE_PATH}/Release/chrome-sandbox")
+    if(_cef_data)
+        file(INSTALL ${_cef_data} DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}/bin")
+    endif()
 elseif(VCPKG_TARGET_IS_OSX)
-    file(GLOB _cef_static "${SOURCE_PATH}/Release/*.a")
-    file(INSTALL ${_cef_static} DESTINATION "${CURRENT_PACKAGES_DIR}/lib")
+    file(GLOB _cef_framework "${SOURCE_PATH}/Release/Chromium Embedded Framework.framework")
+    if(_cef_framework)
+        file(INSTALL ${_cef_framework} DESTINATION "${CURRENT_PACKAGES_DIR}/lib")
+    endif()
 endif()
+
+# Tell vcpkg that this port intentionally provides shared libraries even if
+# the triplet default is static (CEF is always a shared library).
+set(VCPKG_POLICY_DLLS_WITHOUT_EXPORTS enabled)
 
 # ---------------------------------------------------------------------------
 # Install CEF headers

@@ -11,7 +11,7 @@
         },
         {
             "name": "wxwidgets",
-            "features": ["webview"]
+            "features": ["webview", "webview-chromium"]
         },
         "libevent",
         "hyperpage"

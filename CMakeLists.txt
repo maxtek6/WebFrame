@@ -4,8 +4,9 @@ project(webframe VERSION 0.1.0)
 
 find_package(Libevent)
 
+#add_library(webframe_core STATIC src/webframe_core.cpp)
 
-#add_library(webframe_shell STATIC src/shell/shell.cpp)
+#target_include_directories(webframe_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 #add_library(webframe_desktop SHARED)
 

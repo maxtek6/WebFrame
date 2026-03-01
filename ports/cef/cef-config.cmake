@@ -2,7 +2,7 @@
 #
 # Provides the following imported targets:
 #   CEF::wrapper  – static libcef_dll_wrapper (compiled from source)
-#   CEF::lib      – prebuilt libcef_static static library
+#   CEF::lib      – prebuilt libcef shared library
 #   CEF::CEF      – convenience interface that links both
 #
 # Variables:
@@ -43,31 +43,34 @@ if(NOT TARGET CEF::wrapper)
     )
 endif()
 
-# ---------- CEF::lib (prebuilt static) ----------
+# ---------- CEF::lib (prebuilt shared library) ----------
 if(NOT TARGET CEF::lib)
-    add_library(CEF::lib STATIC IMPORTED)
+    add_library(CEF::lib SHARED IMPORTED)
 
-    find_library(_CEF_STATIC_RELEASE
-        NAMES cef_static
+    # On Linux, libcef.so is in the lib/ directory
+    find_library(_CEF_SHARED_RELEASE
+        NAMES cef
         PATHS "${_CEF_ROOT}/lib"
         NO_DEFAULT_PATH
     )
-    find_library(_CEF_STATIC_DEBUG
-        NAMES cef_static
-        PATHS "${_CEF_ROOT}/debug/lib"
-        NO_DEFAULT_PATH
-    )
 
-    if(_CEF_STATIC_RELEASE)
+    if(_CEF_SHARED_RELEASE)
         set_property(TARGET CEF::lib APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
         set_target_properties(CEF::lib PROPERTIES
-            IMPORTED_LOCATION_RELEASE "${_CEF_STATIC_RELEASE}"
+            IMPORTED_LOCATION_RELEASE "${_CEF_SHARED_RELEASE}"
+            IMPORTED_NO_SONAME TRUE
         )
     endif()
-    if(_CEF_STATIC_DEBUG)
+
+    # For debug, fall back to the same release library (CEF does not ship a debug build)
+    if(_CEF_SHARED_RELEASE AND NOT _CEF_SHARED_DEBUG)
+        set(_CEF_SHARED_DEBUG "${_CEF_SHARED_RELEASE}")
+    endif()
+    if(_CEF_SHARED_DEBUG)
         set_property(TARGET CEF::lib APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
         set_target_properties(CEF::lib PROPERTIES
-            IMPORTED_LOCATION_DEBUG "${_CEF_STATIC_DEBUG}"
+            IMPORTED_LOCATION_DEBUG "${_CEF_SHARED_DEBUG}"
+            IMPORTED_NO_SONAME TRUE
         )
     endif()
 endif()
@@ -87,4 +90,5 @@ set(CEF_RESOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/Resources" CACHE PATH "CEF resou
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(CEF DEFAULT_MSG
     _CEF_WRAPPER_RELEASE
+    _CEF_SHARED_RELEASE
 )
