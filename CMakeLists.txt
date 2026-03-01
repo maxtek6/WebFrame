@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.15)
 
 project(webframe VERSION 0.1.0)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 find_package(Libevent)
 
 #add_library(webframe_core STATIC src/webframe_core.cpp)

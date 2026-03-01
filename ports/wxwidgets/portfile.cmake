@@ -40,8 +40,14 @@ vcpkg_check_features(
         secretstore wxUSE_SECRETSTORE
         sound   wxUSE_SOUND
         webview wxUSE_WEBVIEW
-        webview-chromium wxUSE_WEBVIEW_CHROMIUM
 )
+
+if(NOT VCPKG_TARGET_IS_WINDOWS)
+    vcpkg_check_features(OUT_FEATURE_OPTIONS CHROMIUM_FEATURE_OPTIONS FEATURES
+        webview-chromium wxUSE_WEBVIEW_CHROMIUM
+    )
+    list(APPEND FEATURE_OPTIONS ${CHROMIUM_FEATURE_OPTIONS})
+endif()
 
 # Only use wxUSE_WEBVIEW_EDGE on Windows (webview2)
 if(VCPKG_TARGET_IS_WINDOWS AND "webview" IN_LIST FEATURES)
@@ -130,6 +136,7 @@ endif()
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS
+        -DCMAKE_CXX_STANDARD=17
         ${FEATURE_OPTIONS}
         -DwxUSE_REGEX=sys
         -DwxUSE_ZLIB=sys
