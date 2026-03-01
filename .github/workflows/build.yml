@@ -60,14 +60,7 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: ./.github/scripts/osx_setup.sh
 
-      - name: CMake build (Windows)
-        if: matrix.os == 'windows-latest'
-        run: |
-          cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=${{ matrix.vcpkg_root }}/scripts/buildsystems/vcpkg.cmake
-          cmake --build build
-
-      - name: CMake build (Linux/MacOS)
-        if: matrix.os != 'windows-latest'
+      - name: CMake build
         run: |
           cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=${{ matrix.vcpkg_root }}/scripts/buildsystems/vcpkg.cmake -DVCPKG_OVERLAY_PORTS=${{ github.workspace }}/ports
           cmake --build build
