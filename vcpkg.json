@@ -23,7 +23,15 @@
                     "features": [
                         "webview",
                         "webview-chromium"
-                    ]
+                    ],
+                    "platform": "!windows"
+                },
+                {
+                    "name": "wxwidgets",
+                    "features": [
+                        "webview"
+                    ],
+                    "platform": "windows"
                 },
                 "libevent"
             ]
