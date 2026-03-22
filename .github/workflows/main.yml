@@ -81,11 +81,11 @@ jobs:
 
     - name: Ubuntu setup
       if: matrix.os == 'ubuntu-latest'
-      run: ./.github/scripts/ubuntu_setup.sh
+      run: ./WebFrame/.github/scripts/ubuntu_setup.sh
 
     - name: MacOS setup
       if: matrix.os == 'macos-latest'
-      run: ./.github/scripts/osx_setup.sh
+      run: ./WebFrame/.github/scripts/osx_setup.sh
 
     - name: CMake Build
       run: |
