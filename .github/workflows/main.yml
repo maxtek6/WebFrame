@@ -30,12 +30,12 @@ jobs:
 
     - name: CMake Build
       run: |
-        cmake -S WebFrame -B build -DCMAKE_ROOT=${{ github.workspace }}/vcpkg
+        cmake -S WebFrame -B build -DVCPKG_ROOT=${{ github.workspace }}/vcpkg
         cmake --build build
 
   build:
     needs: test
-    name: Build (${{ matrix.os }})
+    name: Build
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -61,5 +61,5 @@ jobs:
 
     - name: CMake Build
       run: |
-        cmake -S WebFrame -B build -DCMAKE_ROOT=${{ github.workspace }}/vcpkg
+        cmake -S WebFrame -B build -DVCPKG_ROOT=${{ github.workspace }}/vcpkg
         cmake --build build
