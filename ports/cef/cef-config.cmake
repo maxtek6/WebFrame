@@ -45,21 +45,37 @@ endif()
 
 # ---------- CEF::lib (prebuilt shared library) ----------
 if(NOT TARGET CEF::lib)
-    add_library(CEF::lib SHARED IMPORTED)
+    if(APPLE)
+        # On macOS, CEF is a .framework bundle
+        set(_CEF_FRAMEWORK_DIR "${_CEF_ROOT}/lib/Chromium Embedded Framework.framework")
+        if(EXISTS "${_CEF_FRAMEWORK_DIR}")
+            set(_CEF_SHARED_RELEASE "${_CEF_FRAMEWORK_DIR}/Chromium Embedded Framework")
+        endif()
 
-    # On Linux, libcef.so is in the lib/ directory
-    find_library(_CEF_SHARED_RELEASE
-        NAMES cef
-        PATHS "${_CEF_ROOT}/lib"
-        NO_DEFAULT_PATH
-    )
-
-    if(_CEF_SHARED_RELEASE)
-        set_property(TARGET CEF::lib APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-        set_target_properties(CEF::lib PROPERTIES
-            IMPORTED_LOCATION_RELEASE "${_CEF_SHARED_RELEASE}"
-            IMPORTED_NO_SONAME TRUE
+        add_library(CEF::lib SHARED IMPORTED)
+        if(_CEF_SHARED_RELEASE)
+            set_property(TARGET CEF::lib APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+            set_target_properties(CEF::lib PROPERTIES
+                IMPORTED_LOCATION_RELEASE "${_CEF_SHARED_RELEASE}"
+                IMPORTED_SONAME_RELEASE "@rpath/Chromium Embedded Framework.framework/Chromium Embedded Framework"
+            )
+        endif()
+    else()
+        # On Linux, libcef.so is in the lib/ directory
+        find_library(_CEF_SHARED_RELEASE
+            NAMES cef
+            PATHS "${_CEF_ROOT}/lib"
+            NO_DEFAULT_PATH
         )
+
+        add_library(CEF::lib SHARED IMPORTED)
+        if(_CEF_SHARED_RELEASE)
+            set_property(TARGET CEF::lib APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+            set_target_properties(CEF::lib PROPERTIES
+                IMPORTED_LOCATION_RELEASE "${_CEF_SHARED_RELEASE}"
+                IMPORTED_NO_SONAME TRUE
+            )
+        endif()
     endif()
 
     # For debug, fall back to the same release library (CEF does not ship a debug build)
@@ -70,7 +86,6 @@ if(NOT TARGET CEF::lib)
         set_property(TARGET CEF::lib APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
         set_target_properties(CEF::lib PROPERTIES
             IMPORTED_LOCATION_DEBUG "${_CEF_SHARED_DEBUG}"
-            IMPORTED_NO_SONAME TRUE
         )
     endif()
 endif()
