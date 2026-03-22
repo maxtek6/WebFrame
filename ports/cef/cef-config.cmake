@@ -88,7 +88,7 @@ set(CEF_RESOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/Resources" CACHE PATH "CEF resou
 
 # ---------- Validation ----------
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(cef DEFAULT_MSG
+find_package_handle_standard_args(CEF DEFAULT_MSG
     _CEF_WRAPPER_RELEASE
     _CEF_SHARED_RELEASE
 )
