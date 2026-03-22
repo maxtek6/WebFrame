@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env: 
       VCPKG_BINARY_SOURCES: >-
-        clear;file,${{ github.workspace }}/vcpkg-test-cache,readwrite
+        clear;files,${{ github.workspace }}/vcpkg-test-cache,readwrite
     steps:
     - name: Checkout vcpkg
       uses: actions/checkout@v6
@@ -43,7 +43,7 @@ jobs:
           os: [windows-latest, ubuntu-latest, macos-latest]
     env: 
       VCPKG_BINARY_SOURCES: >-
-        clear;file,${{ github.workspace }}/vcpkg-${{ matrix.os }}-cache,readwrite
+        clear;files,${{ github.workspace }}/vcpkg-${{ matrix.os }}-cache,readwrite
     steps:
     - name: Checkout vcpkg
       uses: actions/checkout@v6
