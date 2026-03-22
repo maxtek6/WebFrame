@@ -1,0 +1,65 @@
+name: WebFrame CI/CD Pipeline
+
+on:
+  push:
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env: 
+      VCPKG_BINARY_SOURCES: >-
+        clear;file,${{ github.workspace }}/vcpkg-test-cache,readwrite
+    steps:
+    - name: Checkout vcpkg
+      uses: actions/checkout@v6
+      with:
+        repository: microsoft/vcpkg
+        path: vcpkg
+        ref: '2026.01.16'  
+
+    - name: Checkout code
+      uses: actions/checkout@v6
+      with:
+        repository: maxtek6/WebFrame
+        path: WebFrame
+        ref: ${{ github.ref }}
+
+    - name: CMake Build
+      run: |
+        cmake -S WebFrame -B build -DCMAKE_ROOT=${{ github.workspace }}/vcpkg
+        cmake --build build
+
+  build:
+    needs: test
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+          os: [windows-latest, ubuntu-latest, macos-latest]
+    env: 
+      VCPKG_BINARY_SOURCES: >-
+        clear;file,${{ github.workspace }}/vcpkg-${{ matrix.os }}-cache,readwrite
+    steps:
+    - name: Checkout vcpkg
+      uses: actions/checkout@v6
+      with:
+        repository: microsoft/vcpkg
+        path: vcpkg
+        ref: '2026.01.16'  
+
+    - name: Checkout code
+      uses: actions/checkout@v6
+      with:
+        repository: maxtek6/WebFrame
+        path: WebFrame
+        ref: ${{ github.ref }}
+
+    - name: CMake Build
+      run: |
+        cmake -S WebFrame -B build -DCMAKE_ROOT=${{ github.workspace }}/vcpkg
+        cmake --build build

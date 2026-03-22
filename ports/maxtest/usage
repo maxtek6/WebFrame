@@ -1,0 +1,17 @@
+The package maxtest provides CMake integration for the maxtest unit testing framework.
+
+## Usage
+
+After installing maxtest, you can use it in your CMakeLists.txt:
+
+```cmake
+find_package(maxtest REQUIRED CONFIG)
+
+# Create an executable with maxtest
+maxtest_add_executable(my_tests test.cpp)
+
+# Add individual test cases
+maxtest_add_test(my_tests test_name)
+```
+
+For more information, visit: https://github.com/maxtek6/maxtest

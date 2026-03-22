@@ -1,3 +1,20 @@
+option(BUILD_TESTING "Build testing" OFF)
+option(BUILD_RUNTIME "Build runtime" ON)
+option(BUILD_EXAMPLE "Build example" OFF)
+option(BUILD_DOXYGEN "Build doxygen documentation" OFF)
+
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/webframe.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/configure.cmake)
+
+if(NOT VCPKG_ROOT)
+    set(VCPKG_ROOT $ENV{VCPKG_ROOT})
+    if(NOT VCPKG_ROOT)
+        message(FATAL_ERROR "VCPKG_ROOT environment variable is not set. Please set it to the root of your vcpkg installation.")
+    endif()
+endif()
+
+set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
+
 cmake_minimum_required(VERSION 3.15)
 
 project(webframe VERSION 0.1.0)
@@ -6,12 +23,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-find_package(Libevent)
+add_subdirectory(src)
 
-#add_library(webframe_core STATIC src/webframe_core.cpp)
-
-#target_include_directories(webframe_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-
-#add_library(webframe_desktop SHARED)
-
-#add_library(webframe_browser SHARED)
+if(BUILD_TESTING)
+    enable_testing()
+    add_subdirectory(tests)
+endif()

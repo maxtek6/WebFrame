@@ -2,18 +2,38 @@
     "name": "webframe",
     "version": "0.1.0",
     "description": "Portable C++ runtime for web applications",
-    "homepage": "https://github.com/maxtek6/webframe",
+    "homepage": "https://github.com/maxtek6/WebFrame",
     "license": "LGPL-3.0-or-later",
-    "dependencies": [
-        {
-            "name": "cef",
-            "platform": "!windows"
+    "features": {
+        "testing": {
+            "description": "Testing dependencies for WebFrame",
+            "dependencies": [
+                "maxtest"
+            ]
         },
-        {
-            "name": "wxwidgets",
-            "features": ["webview", "webview-chromium"]
+        "runtime": {
+            "description": "The runtime component of WebFrame",
+            "dependencies": [
+                {
+                    "name": "cef",
+                    "platform": "!windows"
+                },
+                {
+                    "name": "wxwidgets",
+                    "features": [
+                        "webview",
+                        "webview-chromium"
+                    ]
+                },
+                "libevent"
+            ]
         },
-        "libevent",
-        "hyperpage"
-    ]
+        "example": {
+            "description": "Example application for WebFrame",
+            "dependencies": [
+                "yyjson",
+                "hyperpage"
+            ]
+        }
+    }
 }
