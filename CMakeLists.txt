@@ -13,6 +13,8 @@ if(NOT VCPKG_ROOT)
     endif()
 endif()
 
+configure_vcpkg_features()
+
 set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
 
 cmake_minimum_required(VERSION 3.15)
@@ -22,6 +24,8 @@ project(webframe VERSION 0.1.0)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+configure_packages()
 
 add_subdirectory(src)
 
