@@ -30,7 +30,7 @@ jobs:
 
     - name: CMake Build
       run: |
-        cmake -S WebFrame -B build -DVCPKG_ROOT=${{ github.workspace }}/vcpkg
+        cmake -S WebFrame -B build -DBUILD_TESTING=ON -DBUILD_RUNTIME=OFF -DVCPKG_ROOT=${{ github.workspace }}/vcpkg
         cmake --build build
 
   build:
@@ -61,5 +61,5 @@ jobs:
 
     - name: CMake Build
       run: |
-        cmake -S WebFrame -B build -DVCPKG_ROOT=${{ github.workspace }}/vcpkg
+        cmake -S WebFrame -B build -DBUILD_TESTING=OFF -DBUILD_RUNTIME=ON -DVCPKG_ROOT=${{ github.workspace }}/vcpkg
         cmake --build build
