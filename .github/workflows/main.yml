@@ -39,7 +39,9 @@ jobs:
     - name: CMake Build
       run: |
         cmake -S WebFrame -B build -DBUILD_TESTING=ON -DBUILD_RUNTIME=OFF -DVCPKG_ROOT=${{ github.workspace }}/vcpkg
-        cmake --build build
+        cd build
+        make -j4
+        make test
 
     - name: "Save VCPKG cache"
       uses: actions/cache/save@v4
