@@ -8,7 +8,7 @@ if(BUILD_RUNTIME)
         SOURCES ${WEBFRAME_SOURCES} ${WEBFRAME_SERVER_SOURCES}
         PUBLIC_INCLUDE_DIRS ${WEBFRAME_INCLUDE_DIR} 
         PRIVATE_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/runtimes/server
-        PUBLIC_LINK_LIBRARIES libevent::core)
+        PUBLIC_LINK_LIBRARIES libevent::core libevent::extra)
 endif()
 
 if(BUILD_TESTING)

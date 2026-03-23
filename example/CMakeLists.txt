@@ -23,3 +23,8 @@ configure_file(
     @ONLY
 )
 
+webframe_add_application(NAME example
+    SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
+    INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}
+    LINK_LIBRARIES yyjson::yyjson hyperpage::hyperpage
+    RUNTIME server)
