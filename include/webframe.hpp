@@ -40,10 +40,10 @@ namespace webframe
 {
     enum class method
     {
-        GET,
-        POST,
-        PUT,
-        DELETE
+        http_get,
+        http_post,
+        http_put,
+        http_delete
     };
 
     class request

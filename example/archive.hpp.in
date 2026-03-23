@@ -1,0 +1,9 @@
+#ifndef ARCHIVE_HPP
+#define ARCHIVE_HPP
+
+#include <hyperpage.hpp>
+
+constexpr const char* ARCHIVE_DIRECTORY = "@HYPERPAGE_ARCHIVE_DIRECTORY@";
+
+
+#endif

@@ -3,12 +3,18 @@ set(WEBFRAME_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../include)
 
 if(BUILD_RUNTIME)
     message(STATUS "Building desktop runtime")
-    message(STATUS "Building browser runtime")
+    file(GLOB WEBFRAME_SERVER_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/runtimes/server/*.cpp)
+    webframe_add_runtime(NAME server
+        SOURCES ${WEBFRAME_SOURCES} ${WEBFRAME_SERVER_SOURCES}
+        PUBLIC_INCLUDE_DIRS ${WEBFRAME_INCLUDE_DIR} 
+        PRIVATE_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/runtimes/server
+        PUBLIC_LINK_LIBRARIES libevent::core)
 endif()
 
 if(BUILD_TESTING)
     file(GLOB WEBFRAME_MOCK_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/runtimes/mock/*.cpp)
     webframe_add_runtime(NAME mock
         SOURCES ${WEBFRAME_SOURCES} ${WEBFRAME_MOCK_SOURCES}
-        PUBLIC_INCLUDE_DIRS ${WEBFRAME_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/runtimes/mock)
+        PUBLIC_INCLUDE_DIRS ${WEBFRAME_INCLUDE_DIR} 
+        PRIVATE_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/runtimes/mock)
 endif()

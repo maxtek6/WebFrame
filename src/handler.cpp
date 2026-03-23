@@ -8,16 +8,16 @@ namespace webframe
         {
             switch (req->get_method())
             {
-            case method::GET:
+            case method::http_get:
                 handle_get(req, res);
                 break;
-            case method::POST:
+            case method::http_post:
                 handle_post(req, res);
                 break;
-            case method::PUT:
+            case method::http_put:
                 handle_put(req, res);
                 break;
-            case method::DELETE:
+            case method::http_delete:
                 handle_delete(req, res);
                 break;
             default:

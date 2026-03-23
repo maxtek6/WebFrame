@@ -27,7 +27,7 @@ namespace webframe::test
     void empty_router::run_tests(client *c)
     {
         request req;
-        req.method = webframe::method::GET;
+        req.method = webframe::method::http_get;
         req.path = "/somepath";
         response res;
         c->run(&req, &res);
