@@ -10,6 +10,8 @@ vcpkg_from_github(
 
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
+    OPTIONS
+        -DCMAKE_INSTALL_INCLUDEDIR=include
 )
 
 vcpkg_cmake_install()

@@ -27,6 +27,7 @@
 #include <string>
 #include <unordered_map>
 
+#include <webframe/application.hpp>
 #include <webframe/exception.hpp>
 #include <webframe/handler.hpp>
 #include <webframe/router.hpp>
@@ -48,29 +49,23 @@ namespace webframe
     class request
     {
     public:
-        virtual method get_method() const;
-        virtual std::string get_path() const;
-        virtual bool get_header(const std::string &key, std::string &value) const;
-        virtual std::pair<const uint8_t *, size_t> get_body() const;
-        virtual void read_body(const std::function<void(const uint8_t *, size_t)> &callback) const;
+        virtual method get_method() const = 0;
+        virtual std::string get_path() const = 0;
+        virtual bool get_header(const std::string &key, std::string &value) const = 0;
+        virtual std::pair<const uint8_t *, size_t> get_body() const = 0;
+        virtual void read_body(const std::function<void(const uint8_t *, size_t)> &callback) const = 0;
     };
 
     class response
     {
     public:
-        virtual void set_status(int status_code);
-        virtual void set_header(const std::string &key, const std::string &value);
-        virtual void set_body(const uint8_t *data, size_t size);
-        virtual void write_body(const std::function<bool(std::pair<const uint8_t *, size_t> &)> &callback);
+        virtual void set_status(int status_code) = 0;
+        virtual void set_header(const std::string &key, const std::string &value) = 0;
+        virtual void set_body(const uint8_t *data, size_t size) = 0;
+        virtual void write_body(const std::function<bool(std::pair<const uint8_t *, size_t> &)> &callback) = 0 ;
     };
 
-    class application
-    {
-    public:
-        virtual void configure_desktop();
-        virtual void configure_server(int argc, const char **argv);
-        virtual void configure_router(router *ctrl);
-    };
+
 
     class runtime
     {

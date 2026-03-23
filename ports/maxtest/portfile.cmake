@@ -11,9 +11,7 @@ file(INSTALL "${SOURCE_PATH}/maxtest.hpp"
      DESTINATION "${CURRENT_PACKAGES_DIR}/include")
 
 # Create CMake config files for find_package support
-file(MAKE_DIRECTORY "${CURRENT_PACKAGES_DIR}/lib/cmake/maxtest")
-
-file(WRITE "${CURRENT_PACKAGES_DIR}/lib/cmake/maxtest/maxtest-config.cmake"
+file(WRITE "${CURRENT_PACKAGES_DIR}/share/maxtest/maxtest-config.cmake"
 "
 include_guard(GLOBAL)
 
