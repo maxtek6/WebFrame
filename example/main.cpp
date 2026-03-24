@@ -40,7 +40,7 @@ protected:
         else {
             res->set_status(404);
             res->set_header("Content-Type", "text/plain");
-            const std::string not_found_msg = "404 Not Found";
+            const std::string not_found_msg = "Not Found";
             res->set_body(reinterpret_cast<const uint8_t*>(not_found_msg.data()), not_found_msg.size());
         }
     }
