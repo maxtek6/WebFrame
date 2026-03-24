@@ -7,6 +7,9 @@ permissions:
   contents: write
   packages: write
 
+env:
+  VCPKG_REF: '2026.01.16'
+
 jobs:
   test:
     name: Unit Tests
@@ -20,7 +23,7 @@ jobs:
       with:
         repository: microsoft/vcpkg
         path: vcpkg
-        ref: '2026.01.16'  
+        ref: ${{ env.VCPKG_REF }}
 
     - name: Checkout code
       uses: actions/checkout@v6
@@ -29,12 +32,20 @@ jobs:
         path: WebFrame
         ref: ${{ github.ref }}
 
+    - name: Compute vcpkg cache hash
+      id: vcpkg-hash
+      shell: bash
+      run: |
+        hash=$(jq -cj '{features,dependencies}' WebFrame/vcpkg.json | cat - WebFrame/vcpkg-configuration.json | sha256sum | awk '{print $1}')
+        echo "value=${hash}" >> $GITHUB_OUTPUT
+
     - name: "Restore VCPKG cache"
+      id: restore-test-cache
       uses: actions/cache/restore@v4
       with:
         path: ${{ github.workspace }}/vcpkg-test-cache
-        key: vcpkg-test-cache-${{ github.run_id }}
-        restore-keys: vcpkg-test-cache
+        key: vcpkg-test-cache-${{ env.VCPKG_REF }}-${{ steps.vcpkg-hash.outputs.value }}
+        restore-keys: vcpkg-test-cache-${{ env.VCPKG_REF }}
 
     - name: CMake Build
       run: |
@@ -44,10 +55,11 @@ jobs:
         make test
 
     - name: "Save VCPKG cache"
+      if: steps.restore-test-cache.outputs.cache-hit != 'true'
       uses: actions/cache/save@v4
       with:
         path: ${{ github.workspace }}/vcpkg-test-cache
-        key: vcpkg-test-cache-${{ github.run_id }}
+        key: vcpkg-test-cache-${{ env.VCPKG_REF }}-${{ steps.vcpkg-hash.outputs.value }}
 
   build:
     needs: test
@@ -66,7 +78,7 @@ jobs:
       with:
         repository: microsoft/vcpkg
         path: vcpkg
-        ref: '2026.01.16'  
+        ref: ${{ env.VCPKG_REF }}
 
     - name: Checkout code
       uses: actions/checkout@v6
@@ -75,12 +87,20 @@ jobs:
         path: WebFrame
         ref: ${{ github.ref }}
 
+    - name: Compute vcpkg cache hash
+      id: vcpkg-hash
+      shell: bash
+      run: |
+        hash=$(jq -cj '{features,dependencies}' WebFrame/vcpkg.json | cat - WebFrame/vcpkg-configuration.json | sha256sum | awk '{print $1}')
+        echo "value=${hash}" >> $GITHUB_OUTPUT
+
     - name: "Restore VCPKG cache"
+      id: restore-build-cache
       uses: actions/cache/restore@v5
       with:
         path: ${{ github.workspace }}/vcpkg-${{ matrix.os }}
-        key: vcpkg-${{ matrix.os }}-${{ github.run_id }}
-        restore-keys: vcpkg-${{ matrix.os }}
+        key: vcpkg-${{ matrix.os }}-${{ env.VCPKG_REF }}-${{ steps.vcpkg-hash.outputs.value }}
+        restore-keys: vcpkg-${{ matrix.os }}-${{ env.VCPKG_REF }}
 
     - name: Ubuntu setup
       if: matrix.os == 'ubuntu-latest'
@@ -96,7 +116,8 @@ jobs:
         cmake --build build
 
     - name: "Save VCPKG cache"
+      if: steps.restore-build-cache.outputs.cache-hit != 'true'
       uses: actions/cache/save@v5
       with:
         path: ${{ github.workspace }}/vcpkg-${{ matrix.os }}
-        key: vcpkg-${{ matrix.os }}-${{ github.run_id }}
+        key: vcpkg-${{ matrix.os }}-${{ env.VCPKG_REF }}-${{ steps.vcpkg-hash.outputs.value }}
