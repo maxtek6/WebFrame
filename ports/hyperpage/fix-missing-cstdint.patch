@@ -1,0 +1,10 @@
+--- hyperpage.hpp.orig	2026-02-28 17:38:49.280169518 -0600
++++ hyperpage.hpp	2026-02-28 17:38:49.283778456 -0600
+@@ -29,6 +29,7 @@
+  * @author John R. Patek Sr.
+  */
+ 
++#include <cstdint>
+ #include <functional>
+ #include <memory>
+ #include <stdexcept>

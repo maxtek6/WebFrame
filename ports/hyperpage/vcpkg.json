@@ -1,0 +1,22 @@
+{
+    "name": "hyperpage",
+    "version": "0.1.0",
+    "port-version": 0,
+    "description": "Fast and efficient solution for storing and loading web content",
+    "homepage": "https://github.com/maxtek6/hyperpage",
+    "license": "MIT",
+    "dependencies": [
+        {
+            "name": "vcpkg-cmake",
+            "host": true
+        },
+        {
+            "name": "vcpkg-cmake-config",
+            "host": true
+        },
+        "sqlite3",
+        "megamimes",
+        "argparse",
+        "mio"
+    ]
+}
