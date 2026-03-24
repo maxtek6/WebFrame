@@ -1,24 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebFrame</title>
-    <script src="form.js"></script>
-</head>
-<body>
-    <header>
-        <h1>WebFrame</h1>
-    </header>
-
-    <form id="name-form" onsubmit="handleNameSubmit(event)">
-        <label for="name">Name</label>
-        <input id="name" name="name" type="text" required>
-        <button type="submit">Submit</button>
-    </form>
-
-    <footer>
-        <p>&copy; 2026 Maxtek Consulting LLC. All rights reserved.</p>
-    </footer>
-</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>WebFrame Example</title>
+        <link rel="stylesheet" href="style.css" />
+        <script src="form.js"></script>
+    </head>
+    <body>
+        <img src="cat.jpg" alt="WebFrame Logo" class="logo" width="20%"/>
+        <div class="divClass">
+            <form id="name-form" onsubmit="handleNameSubmit(event)">
+                <label for="name">Name</label>
+                <input id="name" name="name" type="text" required>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </body>
 </html>

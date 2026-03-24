@@ -1,0 +1,44 @@
+html,
+body {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to bottom, darkcyan, darkgray);
+    /* Gradient background */
+}
+
+.logo {
+    margin-bottom: 24px;
+}
+
+.divClass {
+    text-align: center;
+    color: #ffffff;
+    /* White text color */
+    font-size: 2.5rem;
+    /* Adjusted font size */
+    font-weight: 700;
+    /* Bold text */
+    background: rgba(0, 0, 0, 0.6);
+    /* Semi-transparent background */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.divClass div {
+    margin-bottom: 10px;
+}
+
+.divClass div:last-child {
+    margin-bottom: 0;
+    font-size: 1.5rem;
+    /* Smaller font size for the second line */
+}
