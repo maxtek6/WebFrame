@@ -30,10 +30,11 @@ jobs:
         ref: ${{ github.ref }}
 
     - name: "Restore VCPKG cache"
+      id: restore-test-cache
       uses: actions/cache/restore@v4
       with:
         path: ${{ github.workspace }}/vcpkg-test-cache
-        key: vcpkg-test-cache-${{ github.run_id }}
+        key: vcpkg-test-cache-${{ hashFiles('WebFrame/vcpkg.json', 'WebFrame/vcpkg-configuration.json') }}
         restore-keys: vcpkg-test-cache
 
     - name: CMake Build
@@ -44,10 +45,11 @@ jobs:
         make test
 
     - name: "Save VCPKG cache"
+      if: steps.restore-test-cache.outputs.cache-hit != 'true'
       uses: actions/cache/save@v4
       with:
         path: ${{ github.workspace }}/vcpkg-test-cache
-        key: vcpkg-test-cache-${{ github.run_id }}
+        key: vcpkg-test-cache-${{ hashFiles('WebFrame/vcpkg.json', 'WebFrame/vcpkg-configuration.json') }}
 
   build:
     needs: test
@@ -76,10 +78,11 @@ jobs:
         ref: ${{ github.ref }}
 
     - name: "Restore VCPKG cache"
+      id: restore-build-cache
       uses: actions/cache/restore@v5
       with:
         path: ${{ github.workspace }}/vcpkg-${{ matrix.os }}
-        key: vcpkg-${{ matrix.os }}-${{ github.run_id }}
+        key: vcpkg-${{ matrix.os }}-${{ hashFiles('WebFrame/vcpkg.json', 'WebFrame/vcpkg-configuration.json') }}
         restore-keys: vcpkg-${{ matrix.os }}
 
     - name: Ubuntu setup
@@ -96,7 +99,8 @@ jobs:
         cmake --build build
 
     - name: "Save VCPKG cache"
+      if: steps.restore-build-cache.outputs.cache-hit != 'true'
       uses: actions/cache/save@v5
       with:
         path: ${{ github.workspace }}/vcpkg-${{ matrix.os }}
-        key: vcpkg-${{ matrix.os }}-${{ github.run_id }}
+        key: vcpkg-${{ matrix.os }}-${{ hashFiles('WebFrame/vcpkg.json', 'WebFrame/vcpkg-configuration.json') }}
