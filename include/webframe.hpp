@@ -32,8 +32,15 @@
 #include <webframe/handler.hpp>
 #include <webframe/router.hpp>
 
-#if defined(_WIN32) && defined(WEBFRAME_DESKTOP)
+#if defined(_WIN32) && defined(WEBFRAME_DESKTOP_RUNTIME)
 #define WEBFRAME_WIN32_APP 1
+#endif
+
+#if defined(WEBFRAME_WIN32_APP)
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
 #endif
 
 namespace webframe
@@ -71,7 +78,7 @@ namespace webframe
     {
     public:
 #ifdef WEBFRAME_WIN32_APP
-        virtual int dispatch(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow, application *a, router *r) = 0;
+        virtual int dispatch(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow, application *a, router *r) = 0;
 #else
         virtual int dispatch(int argc, const char **argv, application *a, router *r) = 0;
 #endif
@@ -82,12 +89,12 @@ namespace webframe
 
 #if defined(WEBFRAME_WIN32_APP)
     #define WEBFRAME_MAIN(AppType) \
-        int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) \
+        int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) \
         { \
             std::unique_ptr<webframe::runtime> runtime(webframe::webframe_init()); \
             AppType app; \
             webframe::router router; \
-            return runtime->dispatch(hInstance, hPrevInstance, pCmdLine, nCmdShow, &app, &router); \
+            return runtime->dispatch(hInstance, hPrevInstance, lpCmdLine, nCmdShow, &app, &router); \
         }
 #else
     #define WEBFRAME_MAIN(AppType) \

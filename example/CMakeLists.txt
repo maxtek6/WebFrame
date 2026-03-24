@@ -22,9 +22,16 @@ configure_file(
     ${CMAKE_CURRENT_BINARY_DIR}/archive.hpp
     @ONLY
 )
-
-webframe_add_application(NAME example
-    SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
-    INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}
-    LINK_LIBRARIES yyjson::yyjson hyperpage::hyperpage
-    RUNTIME server)
+if(WIN32)
+    webframe_add_application(NAME example
+        SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
+        INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}
+        LINK_LIBRARIES yyjson::yyjson hyperpage::hyperpage
+        RUNTIME desktop server)
+else()
+    webframe_add_application(NAME example
+        SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
+        INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}
+        LINK_LIBRARIES yyjson::yyjson hyperpage::hyperpage
+        RUNTIME server)
+endif()
