@@ -42,6 +42,16 @@ namespace webframe::server
         int &_status;
     };
 
+    class context : public webframe::server_context
+    {
+    public:
+        context(event_base *base);
+        ~context() = default;
+        void sighandle(int signum) override;
+    private:
+        event_base *_base;
+    };
+
     class runtime : public webframe::runtime
     {
     public:
@@ -53,6 +63,7 @@ namespace webframe::server
         
         std::unique_ptr<struct event_base, decltype(&event_base_free)> _event_base{nullptr, &event_base_free};
         std::unique_ptr<struct evhttp, decltype(&evhttp_free)> _http{nullptr, &evhttp_free};
+        std::unique_ptr<context> _context;
     };
 }
 

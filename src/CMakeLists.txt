@@ -7,7 +7,7 @@ if(BUILD_RUNTIME)
         webframe_add_runtime(NAME desktop
             SOURCES ${WEBFRAME_SOURCES} ${WEBFRAME_DESKTOP_SOURCES}
             PUBLIC_INCLUDE_DIRS ${WEBFRAME_INCLUDE_DIR} 
-            PRIVATE_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/runtimes/desktop
+            PRIVATE_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/runtimes/desktop/include
             PUBLIC_LINK_LIBRARIES wx::core wx::webview)
         target_compile_definitions(webframe_desktop PUBLIC WEBFRAME_DESKTOP_RUNTIME=1)
     endif()
