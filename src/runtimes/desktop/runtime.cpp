@@ -3,41 +3,23 @@
 class wfApp : public wxApp
 {
 public:
-    void Init(webframe::application *application, webframe::router *router)
+    void Init(webframe::desktop::runtime_data *runtime_data)
     {
-        _application = application;
-        _router = router;
+        _runtime_data = runtime_data;
     }
+
     bool OnInit() override
     {
-        _application->configure_desktop();
-        _application->configure_router(_router);
-        _frame = std::make_unique<wxFrame>(nullptr, wxID_ANY, "WebFrame");
-        _webview = wxWebView::New(_frame.get(), wxID_ANY, "about:blank", wxDefaultPosition, wxDefaultSize, wxWebViewBackendEdge);
-#ifdef __WXMSW__
-        _webview->Bind(wxEVT_WEBVIEW_NAVIGATING, [](wxWebViewEvent &event)
-                       {
-        const wxString url = event.GetURL();
-        if (!url.StartsWith("https://webframe.ipc"))
-        {
-            event.Skip();
-        } });
-#endif
-        _webview->Bind(wxEVT_WEBVIEW_CREATED, [this](wxWebViewEvent &event)
-        {
-            wxWebView *webview = reinterpret_cast<wxWebView *>(event.GetEventObject());
-            webview->RegisterHandler(wxSharedPtr<wxWebViewHandler>(new webframe::desktop::webview_handler(_router)));
-            webview->LoadURL("https://webframe.ipc/index.html");
-        });
-        _frame->Show();
+        webframe::desktop_config config;
+        _runtime_data->application->configure_desktop(&config);
+        _runtime_data->application->configure_router(_runtime_data->router);
+        _runtime_data->context = std::make_unique<webframe::desktop::context>(&config, _runtime_data->router);
+        _runtime_data->application->launch_desktop(_runtime_data->context.get());
         return true;
     }
 
 private:
-    std::unique_ptr<wxFrame> _frame;
-    wxWebView *_webview;
-    webframe::application *_application;
-    webframe::router *_router;
+    webframe::desktop::runtime_data *_runtime_data;
 };
 
 namespace webframe
@@ -47,10 +29,11 @@ namespace webframe
         int runtime::launch_wx_app(wfApp *app, webframe::application *a, webframe::router *r)
         {
             int result(0);
-            app->Init(a, r);
+            _runtime_data.application = a;
+            _runtime_data.router = r;
+            app->Init(&_runtime_data);
             if (app->CallOnInit())
             {
-                a->on_dispatch();
                 result = app->OnRun();
             }
             else
@@ -62,7 +45,7 @@ namespace webframe
         }
     }
 
-    runtime *webframe_init()
+    runtime *create_runtime()
     {
         return new desktop::runtime();
     }

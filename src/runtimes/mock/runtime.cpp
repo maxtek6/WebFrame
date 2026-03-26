@@ -14,10 +14,13 @@ namespace webframe
                 int result(0);
                 try
                 {
-                    a->configure_desktop();
-                    a->configure_server(argc, argv);
+                    webframe::desktop_config desktop_config;
+                    webframe::server_config server_config;
+                    a->configure_desktop(&desktop_config);
+                    a->configure_server(&server_config, argc, argv);
                     a->configure_router(r);
-                    a->on_dispatch();
+                    a->launch_desktop(nullptr);
+                    a->launch_server(nullptr);
                 }
                 catch(const std::exception& e)
                 {
@@ -29,7 +32,7 @@ namespace webframe
         };
     }
 
-    runtime *webframe_init()
+    runtime *create_runtime()
     {
         return new mock::runtime();
     }

@@ -56,13 +56,15 @@ namespace webframe
 #ifdef _WIN32
             winsock_session winsock;
 #endif
-            a->configure_server(argc, argv);
+            webframe::server_config config;
+            a->configure_server(&config, argc, argv);
             a->configure_router(r);
             _event_base.reset(event_base_new());
             _http.reset(evhttp_new(_event_base.get()));
+            _context = std::make_unique<context>(_event_base.get());
             evhttp_set_gencb(_http.get(), evhttp_callback, r);
             listen("0.0.0.0", 8080);
-            a->on_dispatch();
+            a->launch_server(_context.get());
             serve();
             return 0;
         }
@@ -79,7 +81,7 @@ namespace webframe
             event_base_loopbreak(_event_base.get());
         }
     }
-    runtime *webframe_init()
+    runtime *create_runtime()
     {
         return new server::runtime();
     }
