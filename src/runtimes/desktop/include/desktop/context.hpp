@@ -13,6 +13,7 @@ namespace webframe::desktop
         webframe::window *create_window(webframe::window *parent, int width, int height) override;
         webframe::window *find_window(const std::string &id) override;
         void destroy_window(webframe::window *handle) override;
+        std::string get_exe_path() const override;
 
     private:
         int _default_width;

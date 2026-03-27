@@ -37,4 +37,9 @@ namespace webframe::desktop
     {
         _windows.erase(handle->get_id());
     }
+
+    std::string context::get_exe_path() const
+    {
+        return wxStandardPaths::Get().GetExecutablePath().ToStdString();
+    }
 }

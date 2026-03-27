@@ -6,6 +6,7 @@
 #include <wx/wx.h>
 #include <wx/mstream.h>
 #include <wx/webview.h>
+#include <wx/stdpaths.h>
 #include <wx/uri.h>
 
 #endif    
