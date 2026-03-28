@@ -25,4 +25,9 @@ namespace webframe
     {
         (void)signum;
     }
+
+    std::string desktop_context::get_exe_path() const
+    {
+        return {};
+    }
 }

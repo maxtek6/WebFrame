@@ -46,6 +46,7 @@ namespace webframe
         virtual window* create_window(window *parent, int width = -1, int height = -1);
         virtual window* find_window(const std::string& id);
         virtual void destroy_window(window* handle);
+        virtual std::string get_exe_path() const;
     };
     
     class server_context
