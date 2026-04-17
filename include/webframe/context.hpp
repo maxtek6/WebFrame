@@ -32,12 +32,23 @@
 
 namespace webframe
 {
+    class window;
+
+    class window_listener
+    {
+    public:
+        virtual void on_close(window *source) = 0;
+    };
+
     class window
     {
     public:
         virtual void set_title(const std::string& title) = 0;
         virtual void load_url(const std::string& url) = 0;
         virtual void load_path(const std::string& path) = 0;
+        
+        virtual void add_listener(window_listener *listener) = 0;
+        
         virtual std::string get_id() const = 0;
     };
 

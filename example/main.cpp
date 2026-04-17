@@ -4,6 +4,8 @@
 
 #include <yyjson.h>
 
+#include <thread>
+
 static std::string get_archive_path()
 {
     std::string result(ARCHIVE_DIRECTORY);
@@ -80,6 +82,16 @@ protected:
     }
 };
 
+class window_listener : public webframe::window_listener
+{
+public:
+    void on_close(webframe::window *source) override
+    {
+        source->set_title("Goodbye!");
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    }
+};
+
 class example_application : public webframe::application
 {
 public:
@@ -95,8 +107,10 @@ public:
         webframe::window *win = context->create_window(nullptr, 800, 600);
         win->set_title("WebFrame Example");
         win->load_path("index.html");
+        win->add_listener(&_window_listener);
     }
 private:
+    window_listener _window_listener;
     archive_handler _archive_handler;
     greeting_ipc_handler _greeting_ipc_handler;
 };
