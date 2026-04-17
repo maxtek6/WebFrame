@@ -26,6 +26,8 @@
  */
 
 #include <csignal>
+
+#include <initializer_list>
 #include <string>
 
 namespace webframe
@@ -33,6 +35,7 @@ namespace webframe
     class window
     {
     public:
+        virtual void set_title(const std::string& title) = 0;
         virtual void load_url(const std::string& url) = 0;
         virtual void load_path(const std::string& path) = 0;
         virtual std::string get_id() const = 0;
@@ -43,9 +46,11 @@ namespace webframe
     public:
         desktop_context() = default;
         ~desktop_context() = default;
+        
         virtual window* create_window(window *parent, int width = -1, int height = -1);
         virtual window* find_window(const std::string& id);
         virtual void destroy_window(window* handle);
+        
         virtual std::string get_exe_path() const;
     };
     

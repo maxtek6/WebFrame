@@ -89,6 +89,13 @@ public:
         router->set_default(&_archive_handler);    
         router->add_route("/greetingIPC", &_greeting_ipc_handler);
     }
+
+    void launch_desktop(webframe::desktop_context *context)
+    {
+        webframe::window *win = context->create_window(nullptr, 800, 600);
+        win->set_title("WebFrame Example");
+        win->load_path("index.html");
+    }
 private:
     archive_handler _archive_handler;
     greeting_ipc_handler _greeting_ipc_handler;

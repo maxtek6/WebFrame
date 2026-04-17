@@ -10,11 +10,14 @@ namespace webframe::desktop
     public:
         window(wxFrame *frame, wxSharedPtr<wxWebViewHandler> webview_handler);
         ~window() = default;
+        
         void load_path(const std::string &path) override;
         void load_url(const std::string &url) override;
-        std::string get_id() const override;
 
+        std::string get_id() const override;
         wxFrame *get_frame() const;
+
+        void set_title(const std::string &title) override;
 
     private:
         std::unique_ptr<wxFrame> _frame;
