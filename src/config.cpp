@@ -17,14 +17,24 @@ namespace webframe
         return result;
     }
 
+    void desktop_config::set_default_window_size(int width, int height)
+    {
+        _default_window_size = {width, height};
+    }
+
     std::pair<int, int> desktop_config::get_default_window_size() const
     {
         return _default_window_size;
     }
 
-    void desktop_config::set_default_window_size(int width, int height)
+    void desktop_config::set_icon(const std::string &path)
     {
-        _default_window_size = {width, height};
+        _icon_paths.push_back(path);
+    }
+
+    void desktop_config::set_icons(const std::initializer_list<std::string> &paths)
+    {
+        _icon_paths.insert(_icon_paths.end(), paths);
     }
 
     void server_config::set_host(const std::string &host)

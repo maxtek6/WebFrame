@@ -50,4 +50,10 @@ namespace webframe::desktop
     {
         return _frame.get();
     }
+
+    void window::set_title(const std::string &title)
+    {
+        wxString wx_title = wxString(title.c_str());
+        _frame->SetTitle(wx_title);
+    }
 }

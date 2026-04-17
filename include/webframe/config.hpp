@@ -19,6 +19,7 @@
 #ifndef WEBFRAME_CONFIG_HPP
 #define WEBFRAME_CONFIG_HPP
 
+#include <list>
 #include <optional>
 #include <string>
 
@@ -38,12 +39,16 @@ namespace webframe
         void set_dark_mode(bool dark_mode);
         void set_default_window_size(int width, int height);
 
+        void set_icon(const std::string& path);
+        void set_icons(const std::initializer_list<std::string>& paths);
+
         bool get_dark_mode(bool &dark_mode) const;
         std::pair<int, int> get_default_window_size() const;
 
     private:
         std::optional<bool> _force_dark_mode;
         std::pair<int, int> _default_window_size = {800, 600};
+        std::list<std::string> _icon_paths;
     };
 
     class server_config
