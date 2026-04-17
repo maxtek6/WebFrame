@@ -13,14 +13,19 @@ namespace webframe::desktop
         
         void load_path(const std::string &path) override;
         void load_url(const std::string &url) override;
-
         std::string get_id() const override;
+
         wxFrame *get_frame() const;
+
+        void add_listener(window_listener *listener) override;
 
         void set_title(const std::string &title) override;
 
     private:
+        void on_close(wxCloseEvent &event);
+
         std::unique_ptr<wxFrame> _frame;
+        std::vector<window_listener*> _listeners;
         wxWebView *_webview;
         struct webview_data
         {

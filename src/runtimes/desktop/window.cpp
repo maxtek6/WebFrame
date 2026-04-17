@@ -19,6 +19,7 @@ namespace webframe::desktop
                 }
                 _webview_data.created = true;
             });
+        _frame->Bind(wxEVT_CLOSE_WINDOW, &window::on_close, this);
         _frame->Show();
     }
 
@@ -46,9 +47,23 @@ namespace webframe::desktop
         return std::to_string(_frame->GetId());
     }
 
+    void window::add_listener(window_listener *listener)
+    {
+        _listeners.push_back(listener);
+    }
+
     wxFrame *window::get_frame() const
     {
         return _frame.get();
+    }
+
+    void window::on_close(wxCloseEvent &event)
+    {
+        for (window_listener *listener : _listeners)
+        {
+            listener->on_close(this);
+        }
+        event.Skip();
     }
 
     void window::set_title(const std::string &title)
