@@ -47,6 +47,11 @@ namespace webframe
             return std::string(uri_path.ToStdString());
         }
 
+        std::string request::get_uri() const
+        {
+            return _request->GetURI().ToStdString();
+        }
+
         bool request::get_header(const std::string &key, std::string &value) const
         {
             wxString header_value = _request->GetHeader(key);
