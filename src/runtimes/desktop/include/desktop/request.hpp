@@ -10,7 +10,11 @@ namespace webframe::desktop
     public:
         request(const wxWebViewHandlerRequest *request);
         ~request() = default;
+        
         webframe::method get_method() const override;
+
+        std::string get_uri() const override;
+
         std::string get_path() const override;
         bool get_header(const std::string &key, std::string &value) const override;
         std::pair<const uint8_t *, size_t> get_body() const override;

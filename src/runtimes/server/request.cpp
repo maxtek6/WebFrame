@@ -36,6 +36,12 @@ namespace webframe::server
 
     }
 
+    std::string request::get_uri() const
+    {
+        const char *uri = evhttp_request_get_uri(_req);
+        return std::string(uri);
+    }
+
     std::string request::get_path() const
     {
         const evhttp_uri *uri = evhttp_request_get_evhttp_uri(_req);

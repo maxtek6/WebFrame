@@ -33,6 +33,7 @@
 #include <webframe/exception.hpp>
 #include <webframe/handler.hpp>
 #include <webframe/router.hpp>
+#include <webframe/uri.hpp>
 
 #if defined(_WIN32) && defined(WEBFRAME_DESKTOP_RUNTIME)
 #define WEBFRAME_WIN32_APP 1
@@ -83,6 +84,8 @@ namespace webframe
          * @return the path of the request
          */
         virtual std::string get_path() const = 0;
+
+        virtual std::string get_uri() const = 0;
         
         /**
          * @brief get the value of a specific header
