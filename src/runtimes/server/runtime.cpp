@@ -57,13 +57,15 @@ namespace webframe
             winsock_session winsock;
 #endif
             webframe::server_config config;
+            config.set_host("0.0.0.0");
+            config.set_port(8080);
             a->configure_server(&config, argc, argv);
             a->configure_router(r);
             _event_base.reset(event_base_new());
             _http.reset(evhttp_new(_event_base.get()));
             _context = std::make_unique<context>(_event_base.get());
             evhttp_set_gencb(_http.get(), evhttp_callback, r);
-            listen("0.0.0.0", 8080);
+            listen(config.get_host().c_str(), config.get_port());
             a->launch_server(_context.get());
             serve();
             return 0;
