@@ -75,6 +75,16 @@ namespace webframe
     {
     public:
         /**
+         * @brief URL variables extracted from the request path
+         * @details If the request path matches a route with variables, the variables will be extracted
+         * and stored in this vector. The order of the variables corresponds to the order of the placeholders
+         * in the route definition.
+         *
+         * TODO: find a cleaner way to do this.
+         */
+        std::vector<std::string> path_variables;
+
+        /**
          * @brief get the HTTP method of the request
          * @return the HTTP method of the request
          */
@@ -86,12 +96,12 @@ namespace webframe
         virtual std::string get_path() const = 0;
 
         virtual std::string get_uri() const = 0;
-        
+
         /**
          * @brief get the value of a specific header
          * @param key the header key
          * @param value reference to the header value
-         * @return true if the header exists, false otherwise. The string reference will only 
+         * @return true if the header exists, false otherwise. The string reference will only
          * be set if the header exists.
          */
         virtual bool get_header(const std::string &key, std::string &value) const = 0;
@@ -99,8 +109,8 @@ namespace webframe
         /**
          * @brief get the body of the request as a pointer and size
          * @return a pair containing a pointer to the body data and the size of the body
-         * @details The body data is not guaranteed to be null-terminated. The pointer and size are only 
-         * valid for the duration of the request handling. If the request does not have a body, the pointer 
+         * @details The body data is not guaranteed to be null-terminated. The pointer and size are only
+         * valid for the duration of the request handling. If the request does not have a body, the pointer
          * will be null and the size will be zero.
          */
         virtual std::pair<const uint8_t *, size_t> get_body() const = 0;
@@ -108,8 +118,8 @@ namespace webframe
         /**
          * @brief read the body of the request using a callback
          * @param callback a function to be called with the body data and size
-         * @details The callback will be called with chunks of the body data. None of the runtimes are 
-         * currently capable of streaming request bodies, so the callback will be called at most once with the 
+         * @details The callback will be called with chunks of the body data. None of the runtimes are
+         * currently capable of streaming request bodies, so the callback will be called at most once with the
          * entire body. If there is no request body, the callback will not be called.
          */
         virtual void read_body(const std::function<void(const uint8_t *, size_t)> &callback) const = 0;
@@ -126,11 +136,11 @@ namespace webframe
         /**
          * @brief set the HTTP status code of the response
          * @param status_code the HTTP status code
-         * @details The status code is not checked against valid HTTP status codes. It can be set to 
+         * @details The status code is not checked against valid HTTP status codes. It can be set to
          * any integer value, but there is no guarantee that the runtime implementation will accept it.
          */
         virtual void set_status(int status_code) = 0;
-        
+
         /**
          * @brief set a header of the response
          * @param key the header key
@@ -138,13 +148,13 @@ namespace webframe
          * @details The headers are not validated, and there is no standard way to handle duplicate entries.
          */
         virtual void set_header(const std::string &key, const std::string &value) = 0;
-        
+
         /**
          * @brief set the body of the response
          * @param data pointer to the body data
          * @param size the size of the body data
-         * @details This must be called once after the status and headers have been set. If it is called 
-         * before, the status will be 200 and the headers will be empty. There is no standard way to handle 
+         * @details This must be called once after the status and headers have been set. If it is called
+         * before, the status will be 200 and the headers will be empty. There is no standard way to handle
          * multiple calls.
          */
         virtual void set_body(const uint8_t *data, size_t size) = 0;
@@ -152,8 +162,8 @@ namespace webframe
         /**
          * @brief write the body of the response using a callback
          * @param callback a function to be called with a chunk to set the body data and size.
-         * @details The callback will be called with chunks of the body data until it returns false to indicate 
-         * end-of-stream. The callback will always be called at least once, and will only populate the chunk if 
+         * @details The callback will be called with chunks of the body data until it returns false to indicate
+         * end-of-stream. The callback will always be called at least once, and will only populate the chunk if
          * the data is not null and the size is greater than zero.
          */
         virtual void write_body(const std::function<bool(std::pair<const uint8_t *, size_t> &)> &callback) = 0;
@@ -162,7 +172,7 @@ namespace webframe
     /**
      * @class runtime
      * @brief abstract interface for WebFrame runtimes
-     * @details Given an application and a router, the runtime is responsible for abstracting HTTP traffic from the 
+     * @details Given an application and a router, the runtime is responsible for abstracting HTTP traffic from the
      * underlying platform. The user will rarely, if ever, interact with this interface directly.
      */
     class runtime
@@ -178,7 +188,7 @@ namespace webframe
          * @param a the application to dispatch
          * @param r the router to use for dispatching requests
          * @return the exit code of the application
-         * @details This is only used for the Win32 desktop runtime. You should not call this directly. Use the WEBFRAME_MAIN macro 
+         * @details This is only used for the Win32 desktop runtime. You should not call this directly. Use the WEBFRAME_MAIN macro
          * to define the entry point of your application, and it will call this function for you.
          */
         virtual int dispatch(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow, application *a, router *r) = 0;
@@ -190,7 +200,7 @@ namespace webframe
          * @param a the application to dispatch
          * @param r the router to use for dispatching requests
          * @return the exit code of the application
-         * @details This is used for all non-Win32 runtimes, including Windows servers. Like the other dispatch function, it 
+         * @details This is used for all non-Win32 runtimes, including Windows servers. Like the other dispatch function, it
          * should not be called directly.
          */
         virtual int dispatch(int argc, const char **argv, application *a, router *r) = 0;

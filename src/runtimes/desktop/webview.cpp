@@ -18,7 +18,7 @@ namespace webframe
             bool sent(false);
             webframe::desktop::request req(&request);
             webframe::desktop::response res(response.get(), sent);
-            webframe::handler *handler = _router->find_route(req.get_path());
+            webframe::handler *handler = _router->find_route(req.get_path(), req.path_variables);
             handler->handle_request(&req, &res);
             if (!sent)
             {

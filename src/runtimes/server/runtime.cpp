@@ -39,7 +39,7 @@ static void evhttp_callback(struct evhttp_request *req, void *arg)
     webframe::router *runtime = static_cast<webframe::router *>(arg);
     webframe::server::request request(req);
     webframe::server::response response(req, sent_response, status);
-    webframe::handler *handler = runtime->find_route(request.get_path());
+    webframe::handler *handler = runtime->find_route(request.get_path(), request.path_variables);
     handler->handle_request(&request, &response);
     if (!sent_response)
     {
