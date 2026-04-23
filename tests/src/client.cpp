@@ -26,7 +26,8 @@ namespace webframe::test
 
     void client::run(const webframe::request *request, webframe::response *response)
     {
-        webframe::handler *handler = _router->find_route(request->get_path());
+        std::vector<std::string> variables;
+        webframe::handler *handler = _router->find_route(request->get_path(), variables);
         handler->handle_request(request, response);
     }
 }
